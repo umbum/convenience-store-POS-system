@@ -44,18 +44,7 @@
                                             <div class="scrollable-tbody-wrapper">
                                                 <table class="table" id="sales-table-body">
                                                     <tbody>
-                                                    <th:block th:each="num: ${#numbers.sequence(1,20)}">
-                                                        <tr>
-                                                            <td data-id="no">1</td>
-                                                            <td data-id="product_name">예제상품</td>
-                                                            <td data-id="unit_price">100</td>
-                                                            <td data-id="quantity">2</td>
-                                                            <td data-id="sub_total">200</td>
-                                                            <td data-id="discount"></td>
-                                                            <td><i class="fa fa-times text-danger m-none"
-                                                                   style="cursor: pointer;"></i></td>
-                                                        </tr>
-                                                    </th:block>
+                                                    <!-- 판매 예정 상품 row가 들어올 곳 -->
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -65,9 +54,9 @@
                                                     <td></td>
                                                     <td>합계 수량 / 금액 / 할인</td>
                                                     <td></td>
-                                                    <td data-id="total_quantity">150</td>
-                                                    <td data-id="total">10000</td>
-                                                    <td data-id="total_discount">0</td>
+                                                    <td id="total_quantity">0</td>
+                                                    <td id="total_total">0</td>
+                                                    <td id="total_discount">0</td>
                                                     <td></td>
                                                 </tr>
                                                 </tfoot>
@@ -153,28 +142,63 @@
     $(function () {
         $('#barcode').keydown(function(e) {
             if (e.keyCode === 13) {
-                var product_info = requestProductInfo($("#barcode").val());
-                $("#barcode").val("");
+                var product_info = requestProductInfo($(this).val());
+                if (product_info !== "") {
+                    addRow(product_info);
+                    // TODO : event 정보를 어떻게 가져올지. 한 번에 product_info로 가져오는게 좋겠지?
+                    updateEventInfoSection(product_info);
+                }
+                else {
+                    // there is no such merchandise.
+                    // TODO : pnotify?? 같은걸 띄워주자.
+                }
 
-                // if product_info is valid
-                addRow(product_info);
-                // else
-                // pnotify?? 같은걸 띄워주자.
-
+                //  input box 초기화
+                $(this).val("");
             }
         });
 
-        function requestProductInfo() {
-            // ajax로 요청해서 product info를 리턴하자.
+        function requestProductInfo(barcode) {
+            // TODO : ajax로 요청해서 product info를 리턴하자.
             // 그냥 간단하게 json으로 하자 별도 객체 만들지 말고
+            return {
+                "product_name" : "예제상품 function으로 입력",
+                "unit_price": 10000,
+                "quantity" : 2,
+                "sub_total" : 20000,
+                "discount" : 0
+            };
         }
 
         function addRow(data) {
-            // 테이블의 끝에 row 추가
-            $("#sales-table-body")
+            const table = $("#sales-table-body");
+            // 마지막 No 가져오기
+            const last_no_text = table.find("tbody tr:last-child td:first-child").text();
+            const last_no = (last_no_text === "" ? 1 : parseInt(last_no_text) + 1);
+
+            const row = $('<tr>')
+                .append('<td>' + last_no + '</td>')
+                .append('<td>' + data.product_name + '</td>')
+                .append('<td>' + data.unit_price + '</td>')
+                .append('<td class="quantity">' + data.quantity + '</td>')
+                .append('<td class="sub_total">' + data.sub_total + '</td>')
+                .append('<td class="discount">' + (data.discount !== 0 ? data.discount : '') + '</td>')
+
+            // cancel 버튼 달기. 손으로 찍으면 영역이 큰게 좋을 것 같아서 td에 달았다.
+            const cancel_btn = $('<td><i class="fa fa-times text-danger m-none" style="cursor: pointer;"></i></td>')
+                .on("click", function () {
+                    removeRow(row);
+            });
+            row.append(cancel_btn);
+
+            // table에 row 추가
+            table.children("tbody").append(row);
+
+            // 스크롤 맨 아래로
+            table.parent().scrollTop(table[0].scrollHeight);
 
             updateTotal();
-            updateEventInfoSection();
+
         }
 
         function updateEventInfoSection() {
@@ -182,13 +206,24 @@
         }
 
         function updateTotal() {
-            // table.column(4).data().reduce(function (a, b) {
-            //     return a + b;
-            // });
+            const table_body = $("#sales-table-body");
+            const table_foot = $("#sales-table-foot");
+            var calcSum = function(selector) {
+                // 함수형!
+                return table_body.find(selector)
+                    .map((_, dom) => dom.textContent === "" ? 0 : parseInt(dom.textContent))
+                    .toArray()
+                    .reduce((acc, val) => acc + val, 0);
+            };
+
+            table_foot.find("#total_quantity").text(calcSum(".quantity"));
+            table_foot.find("#total_total").text(calcSum(".sub_total"));
+            table_foot.find("#total_discount").text(calcSum(".discount"));
+
         }
 
         function removeRow(row) {
-            // icon이 눌렸을 때 removeRow(자기자신) 이렇게 호출하고 이 함수에서 dom제거하면 되겠고
+            row.remove();
             updateTotal();
         }
     });
