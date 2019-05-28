@@ -32,6 +32,12 @@
 #sales-table-head th:nth-of-type(7),
 #sales-table-body td:nth-of-type(7),
 #sales-table-foot td:nth-of-type(7){
+    display: none;
+}
+
+#sales-table-head th:nth-of-type(8),
+#sales-table-body td:nth-of-type(8),
+#sales-table-foot td:nth-of-type(8){
     width: 60px;
     text-align: center;
 }

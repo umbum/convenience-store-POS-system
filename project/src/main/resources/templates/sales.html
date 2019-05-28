@@ -21,109 +21,116 @@
             <div id="mainContent">
                 <div class="full-container">
                     <div class="bgc-white">
-                            <div class="peers fxw-nw@lg+ ai-s">
-                                <div class="peer peer-greed w-70 p-20">
-                                    <div class="layers">
-                                        <div class="layer w-100 mB-10">
-                                            <h4 class="c-grey-900">상품 판매</h4>
-                                        </div>
-                                        <div class="layer w-100">
-                                            <table class="table" id="sales-table-head">
-                                                <thead class="thead-dark">
-                                                <tr>
-                                                    <th scope="col">No</th>
-                                                    <th scope="col">상품명</th>
-                                                    <th scope="col">단가</th>
-                                                    <th scope="col">수량</th>
-                                                    <th scope="col">금액</th>
-                                                    <th scope="col">할인</th>
-                                                    <th scope="col"></th>
-                                                </tr>
-                                                </thead>
-                                            </table>
-                                            <div class="scrollable-tbody-wrapper">
-                                                <table class="table" id="sales-table-body">
-                                                    <tbody>
-                                                    <!-- 판매 예정 상품 row가 들어올 곳 -->
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            <table class="table" id="sales-table-foot">
-                                                <tfoot>
-                                                <tr>
-                                                    <td></td>
-                                                    <td>합계 수량 / 금액 / 할인</td>
-                                                    <td></td>
-                                                    <td id="total_quantity">0</td>
-                                                    <td id="total_total">0</td>
-                                                    <td id="total_discount">0</td>
-                                                    <td></td>
-                                                </tr>
-                                                </tfoot>
+                        <div class="peers fxw-nw@lg+ ai-s">
+                            <div class="peer peer-greed w-70 p-20">
+                                <div class="layers">
+                                    <div class="layer w-100 mB-10">
+                                        <h4 class="c-grey-900">상품 판매</h4>
+                                    </div>
+                                    <div class="layer w-100">
+                                        <table class="table" id="sales-table-head">
+                                            <thead class="thead-dark">
+                                            <tr>
+                                                <th scope="col">No</th>
+                                                <th scope="col">상품명</th>
+                                                <th scope="col">단가</th>
+                                                <th scope="col">수량</th>
+                                                <th scope="col">금액</th>
+                                                <th scope="col">할인</th>
+                                                <th scope="col"></th>    <!-- hidden 상품 코드 -->
+                                                <th scope="col"></th>    <!-- cancel icon -->
+                                            </tr>
+                                            </thead>
+                                        </table>
+                                        <div class="scrollable-tbody-wrapper">
+                                            <table class="table" id="sales-table-body">
+                                                <tbody>
+                                                <!-- 판매 예정 상품 row가 들어올 곳 -->
+                                                </tbody>
                                             </table>
                                         </div>
+                                        <table class="table" id="sales-table-foot">
+                                            <tfoot>
+                                            <tr>
+                                                <td></td>
+                                                <td>합계 수량 / 금액 / 할인</td>
+                                                <td></td>
+                                                <td id="total-quantity">0</td>
+                                                <td id="total-total">0</td>
+                                                <td id="total-discount">0</td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            </tfoot>
+                                        </table>
                                     </div>
                                 </div>
-                                <div class="peer bdL p-20 w-30">
-                                    <div class="layers">
-                                        <div class="layer w-100">
-                                            <div class="layers">
-                                                <div class="layer w-100 mT-15">
-                                                    <div class="p-30 bgc-grey-200 layer w-100 text-center">
-                                                        <p></p>
-                                                        <i class="ti-gift pR-10" style="font-size:30px"></i>
-                                                        <p>행사 상품 정보</p>
-                                                    </div>
+                            </div>
+                            <div class="peer bdL p-20 w-30">
+                                <div class="layers">
+                                    <div class="layer w-100">
+                                        <div class="layers">
+                                            <div class="layer w-100 mT-15">
+                                                <div class="p-30 bgc-grey-200 layer w-100 text-center">
+                                                    <p></p>
+                                                    <i class="ti-gift pR-10" style="font-size:30px"></i>
+                                                    <p>행사 상품 정보</p>
                                                 </div>
-                                                <div class="layer w-100 mT-15">
+                                            </div>
+                                            <div class="layer w-100 mT-15">
+                                                <form id="product-code-form">
                                                     <div class="input-group input-group-icon">
                                                         <span class="input-group-addon">
                                                             <span class="icon"><i class="fa fa-barcode"></i></span>
                                                         </span>
-                                                        <input type="text" id="barcode" class="form-control"
-                                                               placeholder="상품번호를 입력해주세요"></div>
-                                                </div>
-                                                <div class="layer w-100 mT-15">
-                                                    <button type="button"
-                                                            class="btn cur-p btn-lg btn-outline-success w-100">통합 결제
-                                                    </button>
-                                                </div>
-                                                <div class="layer w-100 mT-15">
-                                                    <button type="button"
-                                                            class="btn cur-p btn-lg btn-outline-secondary w-100">서비스
-                                                    </button>
-                                                </div>
-                                                <div class="layer w-100 mT-15">
-                                                    <button type="button"
-                                                            class="btn cur-p btn-lg btn-outline-info w-100">상품직접선택
-                                                    </button>
-                                                </div>
-                                                <div class="layer w-100 mT-15">
-                                                    <button type="button"
-                                                            class="btn cur-p btn-lg btn-outline-danger w-100">환불
-                                                    </button>
-                                                </div>
+                                                        <input type="text" id="product-code" class="form-control"
+                                                               required maxlength="13" pattern="\d{1}|\d{13}"
+                                                               title="product code는 13자리입니다."
+                                                               placeholder="상품번호를 입력해주세요">
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="layer w-100 mT-15">
+                                                <button type="button"
+                                                        class="btn cur-p btn-lg btn-outline-success w-100">통합 결제
+                                                </button>
+                                            </div>
+                                            <div class="layer w-100 mT-15">
+                                                <button type="button"
+                                                        class="btn cur-p btn-lg btn-outline-secondary w-100">서비스
+                                                </button>
+                                            </div>
+                                            <div class="layer w-100 mT-15">
+                                                <button type="button"
+                                                        class="btn cur-p btn-lg btn-outline-info w-100">상품직접선택
+                                                </button>
+                                            </div>
+                                            <div class="layer w-100 mT-15">
+                                                <button type="button"
+                                                        class="btn cur-p btn-lg btn-outline-danger w-100">환불
+                                                </button>
+                                            </div>
 
-                                            </div>
-                                            <div class="peers pT-20 mT-20 bdT fxw-nw@lg+ jc-sb ta-c gap-10">
-                                                <div class="peer">
-                                                    <div class="easy-pie-chart" data-size="80" data-percent="75"
-                                                         data-bar-color="#f44336"><span></span></div>
-                                                    <h6 class="fsz-sm">New Users</h6></div>
-                                                <div class="peer">
-                                                    <div class="easy-pie-chart" data-size="80" data-percent="50"
-                                                         data-bar-color="#2196f3"><span></span></div>
-                                                    <h6 class="fsz-sm">New Purchases</h6></div>
-                                                <div class="peer">
-                                                    <div class="easy-pie-chart" data-size="80" data-percent="90"
-                                                         data-bar-color="#ff9800"><span></span></div>
-                                                    <h6 class="fsz-sm">Bounce Rate</h6></div>
-                                            </div>
+                                        </div>
+                                        <div class="peers pT-20 mT-20 bdT fxw-nw@lg+ jc-sb ta-c gap-10">
+                                            <div class="peer">
+                                                <div class="easy-pie-chart" data-size="80" data-percent="75"
+                                                     data-bar-color="#f44336"><span></span></div>
+                                                <h6 class="fsz-sm">New Users</h6></div>
+                                            <div class="peer">
+                                                <div class="easy-pie-chart" data-size="80" data-percent="50"
+                                                     data-bar-color="#2196f3"><span></span></div>
+                                                <h6 class="fsz-sm">New Purchases</h6></div>
+                                            <div class="peer">
+                                                <div class="easy-pie-chart" data-size="80" data-percent="90"
+                                                     data-bar-color="#ff9800"><span></span></div>
+                                                <h6 class="fsz-sm">Bounce Rate</h6></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -132,73 +139,94 @@
         </footer>
     </div>
 </div>
-<script type="text/javascript" src="../assets/common/vendor.js"></script>
-<script type="text/javascript" src="../assets/common/bundle.js"></script>
-<script type="text/javascript" src="../custom/jquery-3.4.1.js"></script>
+<script type="text/javascript" src="/assets/common/vendor.js"></script>
+<script type="text/javascript" src="/assets/common/bundle.js"></script>
+<script type="text/javascript" src="/custom/jquery-3.4.1.js"></script>
 
 <script>
-    // ajax로 요청 후 받아와서
-    // table에 삽입하고 합계 갱신하는 함수
     $(function () {
-        $('#barcode').keydown(function(e) {
-            if (e.keyCode === 13) {
-                var product_info = requestProductInfo($(this).val());
-                if (product_info !== "") {
-                    addRow(product_info);
-                    // TODO : event 정보를 어떻게 가져올지. 한 번에 product_info로 가져오는게 좋겠지?
-                    updateEventInfoSection(product_info);
-                }
-                else {
-                    // there is no such merchandise.
-                    // TODO : pnotify?? 같은걸 띄워주자.
-                }
+        const form = document.querySelector("#product-code-form");
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            // product_info를 ajax request
+            const product_code_dom = $('#product-code');
+            $.ajax({
+                url: `/product/${product_code_dom.val()}`,
+                type: "GET",
+                contentType: 'application/json;charset=UTF-8',
+                success: function (product_info) {
+                    if (product_info !== "") {
+                        addRow(product_info);
+                        updateEventInfoSection(product_info);
+                        product_code_dom.val("");
+                    } else {
+                        console.log("없는 상품 입니다")
+                        // 없는 상품인 경우. event section에 뭔가 띄워줄 것.
+                    }
 
-                //  input box 초기화
-                $(this).val("");
-            }
+                },
+                error: function () {
+                    // 뭔가 문제가 있는 경우. 여기도 event section 활용하는게 좋겠다.
+                    console.log("product ajax에서 error");
+                }
+            });
+
         });
 
-        function requestProductInfo(barcode) {
-            // TODO : ajax로 요청해서 product info를 리턴하자.
-            // 그냥 간단하게 json으로 하자 별도 객체 만들지 말고
-            return {
-                "product_name" : "예제상품 function으로 입력",
-                "unit_price": 10000,
-                "quantity" : 2,
-                "sub_total" : 20000,
-                "discount" : 0
-            };
-        }
 
-        function addRow(data) {
+        function addRow(product_info) {
+
             const table = $("#sales-table-body");
-            // 마지막 No 가져오기
-            const last_no_text = table.find("tbody tr:last-child td:first-child").text();
-            const last_no = (last_no_text === "" ? 1 : parseInt(last_no_text) + 1);
 
-            const row = $('<tr>')
-                .append('<td>' + last_no + '</td>')
-                .append('<td>' + data.product_name + '</td>')
-                .append('<td>' + data.unit_price + '</td>')
-                .append('<td class="quantity">' + data.quantity + '</td>')
-                .append('<td class="sub_total">' + data.sub_total + '</td>')
-                .append('<td class="discount">' + (data.discount !== 0 ? data.discount : '') + '</td>')
+            // 기존 판매 목록에 존재하는 상품인지 체크
+            const row_with_same_code = table.find("tr")
+                .filter((_, dom) =>
+                    parseInt(dom.querySelector(".product-code").textContent) === product_info.code);
 
-            // cancel 버튼 달기. 손으로 찍으면 영역이 큰게 좋을 것 같아서 td에 달았다.
-            const cancel_btn = $('<td><i class="fa fa-times text-danger m-none" style="cursor: pointer;"></i></td>')
-                .on("click", function () {
-                    removeRow(row);
-            });
-            row.append(cancel_btn);
 
-            // table에 row 추가
-            table.children("tbody").append(row);
+            if (row_with_same_code.length !== 0) {
+                // 기존 판매 목록에 있던 상품인 경우
+                // 수량에 +1해주고 sub-total, discount 갱신
+                const quantity_dom = row_with_same_code.find(".quantity");
+                const new_quantity = parseInt(quantity_dom.text()) + 1;
 
-            // 스크롤 맨 아래로
-            table.parent().scrollTop(table[0].scrollHeight);
+                quantity_dom.text(new_quantity);
+                row_with_same_code.find(".sub-total").text(product_info.unitPrice * new_quantity);
+                row_with_same_code.find(".discount").text(
+                    (product_info.discount !== 0 ? product_info.discount * new_quantity : '')
+                );
+
+            } else {
+                // 기존 판매 목록에 없던 새로운 상품인 경우
+
+                // 마지막 No 가져오기
+                const last_no_text = table.find("tbody tr:last-child td:first-child").text();
+                const last_no = (last_no_text === "" ? 1 : parseInt(last_no_text) + 1);
+
+                const row = $('<tr>')
+                    .append(`<td>${last_no}</td>`)
+                    .append(`<td class="product-name">${product_info.name}</td>`)
+                    .append('<td>' + product_info.unitPrice + '</td>')
+                    .append('<td class="quantity">' + 1 + '</td>')
+                    .append('<td class="sub-total">' + product_info.unitPrice + '</td>')
+                    .append('<td class="discount">' + (product_info.discount !== 0 ? product_info.discount : '') + '</td>')
+                    .append('<td class="product-code">' + product_info.code + '</td>');
+
+                // cancel 버튼 달기. 손으로 터치하면 영역이 큰게 좋을 것 같아서 td에 달았다.
+                const cancel_btn = $('<td><i class="fa fa-times text-danger m-none" style="cursor: pointer;"></i></td>')
+                    .on("click", function () {
+                        removeRow(row);
+                    });
+                row.append(cancel_btn);
+
+                // table에 row 추가
+                table.children("tbody").append(row);
+
+                // 스크롤 맨 아래로
+                table.parent().scrollTop(table[0].scrollHeight);
+            }
 
             updateTotal();
-
         }
 
         function updateEventInfoSection() {
@@ -216,10 +244,9 @@
                     .reduce((acc, val) => acc + val, 0);
             };
 
-            table_foot.find("#total_quantity").text(calcSum(".quantity"));
-            table_foot.find("#total_total").text(calcSum(".sub_total"));
-            table_foot.find("#total_discount").text(calcSum(".discount"));
-
+            table_foot.find("#total-quantity").text(calcSum(".quantity"));
+            table_foot.find("#total-total").text(calcSum(".sub-total"));
+            table_foot.find("#total-discount").text(calcSum(".discount"));
         }
 
         function removeRow(row) {
