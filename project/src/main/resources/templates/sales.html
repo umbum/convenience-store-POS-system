@@ -134,13 +134,10 @@
                 </div>
             </div>
         </main>
-        <footer class="bdT ta-c p-30 lh-0 fsz-sm c-grey-600"><span>Copyright © 2017 Designed by <a
-                href="https://colorlib.com" target="_blank" title="Colorlib">Colorlib</a>. All rights reserved.</span>
-        </footer>
+<!--        <footer th:replace="fragments/general.html :: footer"></footer>-->
     </div>
 </div>
-<script type="text/javascript" src="/assets/common/vendor.js"></script>
-<script type="text/javascript" src="/assets/common/bundle.js"></script>
+<script th:replace="fragments/general.html :: common-script"></script>
 <script type="text/javascript" src="/custom/jquery-3.4.1.js"></script>
 
 <script>
