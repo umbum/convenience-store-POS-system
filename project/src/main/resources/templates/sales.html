@@ -21,7 +21,7 @@
             <div id="mainContent">
                 <div class="full-container">
                     <div class="bgc-white">
-                        <div class="peers fxw-nw@lg+ ai-s">
+                        <div class="peers fxw-nw ai-s">
                             <div class="peer peer-greed w-70 p-20">
                                 <div class="layers">
                                     <div class="layer w-100 mB-10">
@@ -55,9 +55,9 @@
                                                 <td></td>
                                                 <td>합계 수량 / 금액 / 할인</td>
                                                 <td></td>
-                                                <td id="total-quantity">0</td>
-                                                <td id="total-total">0</td>
-                                                <td id="total-discount">0</td>
+                                                <td class="total-quantity">0</td>
+                                                <td class="total-total">0</td>
+                                                <td class="total-discount">0</td>
                                                 <td></td>
                                                 <td></td>
                                             </tr>
@@ -92,8 +92,112 @@
                                             </div>
                                             <div class="layer w-100 mT-15">
                                                 <button type="button"
-                                                        class="btn cur-p btn-lg btn-outline-success w-100">통합 결제
+                                                        class="btn cur-p btn-lg btn-outline-success w-100"
+                                                        data-toggle="modal"
+                                                        data-target="#payment-modal">통합 결제
                                                 </button>
+                                                <div class="modal fade" id="payment-modal" tabindex="-1" role="dialog"
+                                                     aria-labelledby="payment-modal-label" aria-hidden="true">
+                                                    <div class="modal-dialog modal-lg" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h4 class="modal-title c-grey-900"
+                                                                    id="payment-modal-label">
+                                                                    통합 결제</h4>
+                                                                <button type="button" class="close" data-dismiss="modal"
+                                                                        aria-label="Close"><span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body row">
+                                                                <div class="col-8">
+                                                                    <div class="form-group row">
+                                                                        <label for="amount-to-pay"
+                                                                               class="col-sm-4 col-form-label">
+                                                                            <h5 class="c-grey-900">결제할 금액 입력</h5>
+                                                                        </label>
+                                                                        <div class="col-sm-8">
+                                                                            <input type="text" class="form-control"
+                                                                                   id="amount-to-pay" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group row">
+                                                                        <label for="card-number"
+                                                                               class="col-sm-4 col-form-label">
+                                                                            <h5 class="c-grey-900">카드번호</h5></label>
+                                                                        <div class="col-sm-8">
+                                                                            <input type="text" class="form-control"
+                                                                                   id="card-number"
+                                                                                   placeholder="카드결제 시 사용"
+                                                                                   minlength=12 maxlength=12 required
+                                                                                   title="카드 번호는 12자리입니다.">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row pY-5">
+                                                                        <div class="col-6">
+                                                                            <button type="submit"
+                                                                                    class="btn cur-p btn-lg btn-outline-success w-100"
+                                                                                    id="credit-card-payment-btn"
+                                                                                    value="card">
+                                                                                신용카드
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="col-6">
+                                                                            <button type="submit"
+                                                                                    class="btn cur-p btn-lg btn-outline-success w-100"
+                                                                                    id="cash-payment-btn"
+                                                                                    value="cash">
+                                                                                현금결제
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-4 bdL">
+                                                                    <div class="bdB pB-10">
+                                                                        <h3 class="c-grey-900">
+                                                                            <small>총 <span
+                                                                                    class="total-quantity">0</span>개
+                                                                            </small>
+                                                                            <span class="pull-right total-payment">0</span>
+                                                                        </h3>
+                                                                    </div>
+                                                                    <div class="pT-10">
+                                                                        <h5 class="c-grey-900">
+                                                                            <small>결제한 금액</small>
+                                                                            <span class="pull-right amount-paid">0</span>
+                                                                        </h5>
+                                                                    </div>
+                                                                    <div class="bdB pB-10">
+                                                                        <h5 class="c-grey-900">
+                                                                            <small>남은 금액</small>
+                                                                            <span class="pull-right amount-remained">0</span>
+                                                                        </h5>
+                                                                    </div>
+                                                                    <div class="pT-10 bill-list">
+                                                                        <h5 class="c-grey-900">
+                                                                            <small>현금결제</small>
+                                                                            <span class="pull-right">1000</span></h5>
+                                                                    </div>
+
+                                                                    <div class="bdT pT-10">
+                                                                        <button type="button"
+                                                                                class="btn cur-p btn-lg btn-info w-100">
+                                                                            (icon)멤버십 적립*할인
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary"
+                                                                        data-dismiss="modal">
+                                                                    Close
+                                                                </button>
+                                                                <button type="button" class="btn btn-primary">Save
+                                                                    changes
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="layer w-100 mT-15">
                                                 <button type="button"
@@ -112,7 +216,7 @@
                                             </div>
 
                                         </div>
-                                        <div class="peers pT-20 mT-20 bdT fxw-nw@lg+ jc-sb ta-c gap-10">
+                                        <div class="peers pT-20 mT-20 bdT fxw-nw jc-sb ta-c gap-10">
                                             <div class="peer">
                                                 <div class="easy-pie-chart" data-size="80" data-percent="75"
                                                      data-bar-color="#f44336"><span></span></div>
@@ -134,7 +238,7 @@
                 </div>
             </div>
         </main>
-<!--        <footer th:replace="fragments/general.html :: footer"></footer>-->
+        <!--        <footer th:replace="fragments/general.html :: footer"></footer>-->
     </div>
 </div>
 <script th:replace="fragments/general.html :: common-script"></script>
@@ -232,8 +336,7 @@
 
         function updateTotal() {
             const table_body = $("#sales-table-body");
-            const table_foot = $("#sales-table-foot");
-            var calcSum = function(selector) {
+            var calcSum = function (selector) {
                 // 함수형!
                 return table_body.find(selector)
                     .map((_, dom) => dom.textContent === "" ? 0 : parseInt(dom.textContent))
@@ -241,9 +344,14 @@
                     .reduce((acc, val) => acc + val, 0);
             };
 
-            table_foot.find("#total-quantity").text(calcSum(".quantity"));
-            table_foot.find("#total-total").text(calcSum(".sub-total"));
-            table_foot.find("#total-discount").text(calcSum(".discount"));
+
+            const total_total = calcSum(".sub-total");
+            const total_discount = calcSum('.discount');
+            $(".total-quantity").text(calcSum(".quantity"));
+            $(".total-total").text(total_total);
+            $(".total-discount").text(total_discount);
+            $(".total-payment").text(total_total - total_discount);
+            $(".amount-remained").text(total_total - total_discount);
         }
 
         function removeRow(row) {
@@ -254,5 +362,61 @@
 
 
 </script>
+<script>
+    $(function () {
+        // modal 신용카드 결제 버튼 클릭 시
+        $("#credit-card-payment-btn").on("click", function(e) {validateAndAppendBill(e);});
+        // modal 현금결제 버튼 클릭 시
+        $("#cash-payment-btn").on("click", function(e) {validateAndAppendBill(e);});
+
+
+        function applyValidation(dom) {
+            if (!dom.checkValidity()) {
+                dom.classList.add("invalid");
+                return false;
+            }
+            else {
+                dom.classList.remove("invalid");
+                return true;
+            }
+        }
+
+        function validateAndAppendBill(e) {
+
+            const amount_to_pay = document.querySelector("#amount-to-pay");
+            const card_number = document.querySelector("#card-number");
+            const payment_method = e.target;
+            const amount_paid = $(".amount-paid");
+            const amount_remained = $(".amount-remained");
+
+            applyValidation(amount_to_pay);
+            if (payment_method.value === "card") {
+                applyValidation(amount_to_pay);
+                if (!applyValidation(card_number)) {
+                    return;
+                }
+            }
+            else {
+                if (!applyValidation(amount_to_pay)) {
+                    return;
+                }
+            }
+
+
+            amount_to_pay.value = (parseInt(amount_to_pay.value) > parseInt(amount_remained.text())) ?
+                parseInt(amount_remained.text()) : amount_to_pay.value;
+
+
+            $(".bill-list").append(
+                `<h5 class="c-grey-900"><small>${payment_method.textContent}</small><span class="pull-right">${amount_to_pay.value}</span></h5>`
+            );
+
+            amount_paid.text(parseInt(amount_paid.text()) + parseInt(amount_to_pay.value));
+            amount_remained.text(parseInt(amount_remained.text()) - parseInt(amount_to_pay.value));
+        }
+
+    });
+</script>
+
 </body>
 </html>

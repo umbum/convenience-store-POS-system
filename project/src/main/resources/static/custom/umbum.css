@@ -166,3 +166,12 @@
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
 }
+
+.bill-list {
+    overflow:auto;
+    height: calc(100vh - 550px);
+}
+
+.invalid {
+    border-color: red;
+}
