@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <div th:replace="fragments/general.html :: header"></div>
+    <link href="/custom/pnotify/pnotify.custom.css" rel="stylesheet">
 </head>
 <body class="app">
 <div id="loader">
@@ -94,7 +95,8 @@
                                                 <button type="button"
                                                         class="btn cur-p btn-lg btn-outline-success w-100"
                                                         data-toggle="modal"
-                                                        data-target="#payment-modal">통합 결제
+                                                        data-target="#payment-modal"
+                                                        data-backdrop="static">통합 결제
                                                 </button>
                                                 <div class="modal fade" id="payment-modal" tabindex="-1" role="dialog"
                                                      aria-labelledby="payment-modal-label" aria-hidden="true">
@@ -240,6 +242,7 @@
 </div>
 <script th:replace="fragments/general.html :: common-script"></script>
 <script type="text/javascript" src="/custom/jquery-3.4.1.js"></script>
+<script src="/custom/pnotify/pnotify.custom.js"></script>
 
 <script>
     $(function () {
@@ -355,12 +358,11 @@
             row.remove();
             updateTotal();
         }
-    });
 
 
-</script>
-<script>
-    $(function () {
+        /**
+         * 결제 관련
+         */
         // modal 신용카드 결제 버튼 클릭 시
         $("#credit-card-payment-btn").on("click", function (e) {
             validateAndAppendBill(e);
@@ -459,16 +461,42 @@
                 }),
                 contentType: 'application/json;charset=UTF-8',
                 success: function (str) {
-                    console.log(str);
                     // 결제 완료 pnotify
+                    var notice = new PNotify({
+                        title: str,
+                        text: '거래가 정상적으로 완료되었습니다.',
+                        type: "success",
+                        // addclass: 'click-2-close',
+                        // buttons: {
+                        //     closer: false,
+                        //     sticker: false
+                        // }
+                    });
 
-                    // 모달 종료
+                    notice.get().click(function () {
+                        notice.remove();
+                    });
 
-                    clearCntSales();
+                    setTimeout(function () {
+                        // 모달 종료
+                        $('.close').click();
+                        // 판매 내역 초기화
+                        clearCntSales();
+                    }, 1000);
+
                 },
                 error: function () {
-                    console.log("sales ajax에서 error");
-                    // 여기는 아무래도 왼쪽아래 빈공간. 활용해서 뭔가 문제가 있음을 띄워줄 것.
+                    var notice = new PNotify({
+                        title: 'Error',
+                        text: '서버에 거래 내역을 전송하는 과정에서 에러가 발생했습니다.',
+                        type: 'error',
+                        addclass: 'click-2-close',
+                        hide: false,
+                    });
+
+                    notice.get().click(function () {
+                        notice.remove();
+                    });
                 }
             });
         }
@@ -477,10 +505,18 @@
         // 결제 완료 시 또는 판매 대기 상태에서 취소하고 싶을 때 clear
         function clearCntSales() {
             $(".payment-method").prop("disabled", false);
+            $("#bill-list").empty();
+            $("#sales-table-body > tbody").empty();
+            $("#amount-to-pay").val("");
+            $("#card-number").val("");
+            $(".amount-paid").text("0");
+            updateTotal();
         }
 
     });
-</script>
 
+
+</script>
+</div>
 </body>
 </html>
