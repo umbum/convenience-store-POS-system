@@ -175,3 +175,17 @@
 .invalid {
     border-color: red;
 }
+
+
+.form-group {
+    margin-bottom : 0px;
+}
+
+.umbum-label {
+    font-size :1.2em;
+}
+
+.umbum-table-tbody-row-height tbody td {
+    line-height : 1.15;
+    padding : .50rem;
+}
