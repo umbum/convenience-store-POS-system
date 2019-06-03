@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class SalesInfo {
     private Sales sales;
-    private List<Payment> payments;
+    private List<Payment> paymentList;
     @JsonProperty("sales_products")
-    private List<SalesProduct> salesProducts;
+    private List<SalesProduct> salesProductList;
 }

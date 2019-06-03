@@ -14,6 +14,6 @@ public class Sales {
     @JsonIgnore
     private long recNum;
     @JsonIgnore
-    private boolean cancelCheck;    // whetherCancled 정도가 더 낫지 않나...
+    private boolean cancelCheck;    // whetherCanceled 정도가 더 낫지 않나...
     private int amount;    // NUMBER(int자리수 -1)
 }

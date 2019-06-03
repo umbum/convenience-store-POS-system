@@ -1,10 +1,7 @@
 package com.umbum.pos.service;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.umbum.pos.model.Payment;
 import com.umbum.pos.model.SalesInfo;
@@ -32,31 +29,30 @@ public class SalesService {
     }
 
 
-
+    @Transactional
     public String saveSalesInfo(SalesInfo salesInfo) {
 //        salesInfo.getSales().setRecNum(); 영수증 번호는 어떻게 할거야?
 
-        // 얘네 전체를 트랜잭션으로 묶고 싶다 이거지...
 
         long salesNum = salesRepo.create(salesInfo.getSales());
 
-        salesInfo.getSalesProducts().forEach(salesProduct -> {
+        salesInfo.getSalesProductList().forEach(salesProduct -> {
             salesProduct.setSalesNum(salesNum);
         });
-        salesInfo.getPayments().forEach(payment -> {
+        salesInfo.getPaymentList().forEach(payment -> {
             payment.setSalesNum(salesNum);
         });
 
         System.out.println(salesInfo.getSales());
-        for (Payment p : salesInfo.getPayments()) {
+        for (Payment p : salesInfo.getPaymentList()) {
             System.out.println(p);
         }
-        for (SalesProduct s : salesInfo.getSalesProducts()) {
+        for (SalesProduct s : salesInfo.getSalesProductList()) {
             System.out.println(s);
         }
 
-        paymentRepo.createAll(salesInfo.getPayments());
-        salesProductRepo.createAll(salesInfo.getSalesProducts());
+        paymentRepo.createAll(salesInfo.getPaymentList());
+        salesProductRepo.createAll(salesInfo.getSalesProductList());
 
         String result = "SUCCESS";
 

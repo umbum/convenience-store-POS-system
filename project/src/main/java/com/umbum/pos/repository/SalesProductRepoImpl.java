@@ -19,7 +19,7 @@ public class SalesProductRepoImpl implements SalesProductRepo {
     }
 
     @Override
-    public void createAll(List<SalesProduct> salesProducts) {
+    public void createAll(List<SalesProduct> salesProductList) {
 
     }
 }

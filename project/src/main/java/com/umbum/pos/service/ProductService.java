@@ -14,6 +14,6 @@ public class ProductService {
     }
 
     public Product getProduct(long productCode) {
-        return productRepo.getProduct(productCode);
+        return productRepo.read(productCode);
     }
 }

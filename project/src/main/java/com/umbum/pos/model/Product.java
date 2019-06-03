@@ -8,5 +8,5 @@ public class Product {
     private String name;
     private int unitPrice;
     private int discount;
-    // 여기서 event도.
+    // TODO 이벤트를 묶어서 가져올거면, 이벤트를 묶어서 가져오는 데이터 타입을 하나 더 만들어야겠네
 }

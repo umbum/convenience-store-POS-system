@@ -19,7 +19,7 @@ public class PaymentRepoImpl implements PaymentRepo{
     }
 
     @Override
-    public long createAll(List<Payment> payment) {
+    public long createAll(List<Payment> paymentList) {
         return 0;
     }
 }
