@@ -54,15 +54,16 @@
                                     </div>
 
                                     <div class="layer w-100 mB-10">
-                                        <form id="product-code-form">
+                                        <form id="barcode-form">
                                             <div class="input-group input-group-icon">
                                                         <span class="input-group-addon">
                                                             <span class="icon"><i class="fa fa-barcode"></i></span>
                                                         </span>
-                                                <input type="text" id="product-code" class="form-control"
-                                                       required maxlength="13" pattern="\d{1}|\d{13}"
-                                                       title="product code는 13자리입니다."
-                                                       placeholder="상품번호를 입력해주세요">
+                                                <input type="text" id="barcode" class="form-control"
+                                                       required maxlength="13"
+                                                       pattern="\d{2}|\d{3}"
+                                                       title="barcode는 2-3자리입니다."
+                                                       placeholder="상품 바코드를 입력해주세요">
                                             </div>
                                         </form>
                                     </div>
@@ -139,7 +140,7 @@
          *  DataTable init
          */
         var $table = $('#datatable');
-        const pageLength = 6;
+        const pageLength = 5;
         const $datatable = $table.DataTable({
             "ajax": {
                 "url": $table.data("url") + "0",
@@ -167,9 +168,9 @@
                 },
                 {
                     "targets": 3,
-                    "data": "productCode",
+                    "data": "productId",
                     "width": "150px",
-                    className: 'text-center product-code'
+                    className: 'text-center product-id'
                 },
                 {"targets": 4, "data": "productName", "orderable": false},
                 {
@@ -213,13 +214,13 @@
         /**
          * 상품 코드 검색 및 row 추가
          */
-        const form = document.querySelector("#product-code-form");
+        const form = document.querySelector("#barcode-form");
         form.addEventListener("submit", function (e) {
             e.preventDefault();
             // product_info를 ajax request
-            const product_code_dom = $('#product-code');
+            const barcode_dom = $('#barcode');
             $.ajax({
-                url: `/product/${product_code_dom.val()}`,
+                url: `/product/${barcode_dom.val()}`,
                 type: "GET",
                 contentType: 'application/json;charset=UTF-8',
                 success: function (product_info) {
@@ -227,7 +228,7 @@
 
                         addDataTableRow(product_info);
                         // updateEventInfoSection(product_info);
-                        product_code_dom.val("");
+                        barcode_dom.val("");
                     } else {
                         var notice = new PNotify({
                             title: 'Notice',
@@ -266,7 +267,7 @@
 
             // datatable은 무조건 rowIdx를 구해야 한다. 그냥 내가 원하는 row 반환받고 거기다가 뭔가를 적용하면 바보같이 동작함. 왜 이렇게 만들었는지 모르겠음..
             const rowIdx  = table.rows().eq( 0 ).filter( function (rowIdx) {
-                return table.cell( rowIdx, ".product-code" ).data() === product_info.code;
+                return table.cell( rowIdx, ".product-id" ).data() === product_info.productId;
             });
 
             if (rowIdx.length !== 0) {
@@ -286,7 +287,7 @@
                     "hiddenOrder" : (lastRow) ? lastRow.hiddenOrder + 1 : 1,
                     "status" : "create",
                     "no" : (lastRow) ? lastRow.no + 1 : 1,
-                    "productCode" : product_info.code,
+                    "productId" : product_info.productId,
                     "productName" : product_info.name,
                     "quantity" : 1,
                     "date" : $("#date-picker").val().split("/").join("")
@@ -309,9 +310,9 @@
                 url: "/discard-history/" + $datepicker.val().split("/").join(""),
                 type: "POST",
                 data: JSON.stringify({
-                    "payments": 1,
+                    "paymentList": 1,
                     "sales": 1,
-                    "sales_products": 1
+                    "salesProductList": 1
                 }),
                 contentType: 'application/json;charset=UTF-8',
                 success: function (str) {

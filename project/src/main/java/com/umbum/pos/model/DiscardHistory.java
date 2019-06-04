@@ -6,7 +6,7 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class DiscardHistory {
-    private long productCode;
+    private long productId;
     private String productName;
     private int quantity;
     private String date;

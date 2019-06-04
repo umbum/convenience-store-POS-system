@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Data
 public class SalesProduct {
-    private long prodCode;
+    private long productId;
     @JsonIgnore
-    private long salesNum;
+    private long salesId;
     private int quantity;
 }

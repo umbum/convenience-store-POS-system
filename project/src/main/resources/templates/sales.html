@@ -79,15 +79,17 @@
                                                 </div>
                                             </div>
                                             <div class="layer w-100 mT-15">
-                                                <form id="product-code-form">
+                                                <form id="barcode-form">
                                                     <div class="input-group input-group-icon">
                                                         <span class="input-group-addon">
                                                             <span class="icon"><i class="fa fa-barcode"></i></span>
                                                         </span>
-                                                        <input type="text" id="product-code" class="form-control"
-                                                               required maxlength="13" pattern="\d{1}|\d{13}"
-                                                               title="product code는 13자리입니다."
-                                                               placeholder="상품번호를 입력해주세요">
+                                                        <input type="text" id="barcode" class="form-control"
+                                                               required maxlength="13"
+                                                               pattern="\d{2}|\d{3}"
+                                                               title="barcode는 2-3자리입니다."
+                                                               placeholder="상품 바코드를 입력해주세요">
+
                                                     </div>
                                                 </form>
                                             </div>
@@ -246,20 +248,20 @@
 
 <script>
     $(function () {
-        const form = document.querySelector("#product-code-form");
+        const form = document.querySelector("#barcode-form");
         form.addEventListener("submit", function (e) {
             e.preventDefault();
             // product_info를 ajax request
-            const product_code_dom = $('#product-code');
+            const barcode_dom = $('#barcode');
             $.ajax({
-                url: `/product/${product_code_dom.val()}`,
+                url: `/product/${barcode_dom.val()}`,
                 type: "GET",
                 contentType: 'application/json;charset=UTF-8',
                 success: function (product_info) {
                     if (product_info !== "") {
                         addRow(product_info);
                         updateEventInfoSection(product_info);
-                        product_code_dom.val("");
+                        barcode_dom.val("");
                     } else {
                         console.log("없는 상품 입니다")
                         // 없는 상품인 경우. event section에 뭔가 띄워줄 것.
@@ -282,7 +284,7 @@
             // 기존 판매 목록에 존재하는 상품인지 체크
             const row_with_same_code = table.find("tr")
                 .filter((_, dom) =>
-                    parseInt(dom.querySelector(".product-code").textContent) === product_info.code);
+                    parseInt(dom.querySelector(".product-id").textContent) === product_info.productId);
 
 
             if (row_with_same_code.length !== 0) {
@@ -292,7 +294,7 @@
                 const new_quantity = parseInt(quantity_dom.text()) + 1;
 
                 quantity_dom.text(new_quantity);
-                row_with_same_code.find(".sub-total").text(product_info.unitPrice * new_quantity);
+                row_with_same_code.find(".sub-total").text(product_info.price * new_quantity);
                 row_with_same_code.find(".discount").text(
                     (product_info.discount !== 0 ? product_info.discount * new_quantity : '')
                 );
@@ -307,11 +309,11 @@
                 const row = $('<tr>')
                     .append(`<td>${last_no}</td>`)
                     .append(`<td class="product-name">${product_info.name}</td>`)
-                    .append('<td>' + product_info.unitPrice + '</td>')
+                    .append('<td>' + product_info.price + '</td>')
                     .append('<td class="quantity">' + 1 + '</td>')
-                    .append('<td class="sub-total">' + product_info.unitPrice + '</td>')
+                    .append('<td class="sub-total">' + product_info.price + '</td>')
                     .append('<td class="discount">' + (product_info.discount !== 0 ? product_info.discount : '') + '</td>')
-                    .append('<td class="product-code">' + product_info.code + '</td>');
+                    .append('<td class="product-id">' + product_info.productId + '</td>');
 
                 // cancel 버튼 달기. 손으로 터치하면 영역이 큰게 좋을 것 같아서 td에 달았다.
                 const cancel_btn = $('<td><i class="fa fa-times text-danger m-none" style="cursor: pointer;"></i></td>')
@@ -428,8 +430,8 @@
             $(".payment-method").prop("disabled", true);
 
             const sales = {
-                "cusNum": 1234,
-                "braNum": 1111,
+                "customerId": 1234,
+                "branchId": 1111,
                 "amount": $("#total-payment").text()
             };
 
@@ -437,7 +439,7 @@
             const sales_products = [];
             $("#sales-table-body").find("tr").each(function (idx, dom) {
                 sales_products.push({
-                    "prodCode": $(dom).find(".product-code").text(),
+                    "productId": $(dom).find(".product-id").text(),
                     "quantity": $(dom).find(".quantity").text()
                 });
             });
@@ -455,9 +457,9 @@
                 url: "/sales",
                 type: "POST",
                 data: JSON.stringify({
-                    "payments": payments,
+                    "paymentList": payments,
                     "sales": sales,
-                    "sales_products": sales_products
+                    "salesProductList": sales_products
                 }),
                 contentType: 'application/json;charset=UTF-8',
                 success: function (str) {

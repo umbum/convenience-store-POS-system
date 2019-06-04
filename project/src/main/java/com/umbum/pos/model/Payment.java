@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class Payment {
     @JsonIgnore
-    private long salesNum;
+    private long salesId;
     private String method;
     private long amount;
 }

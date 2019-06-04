@@ -6,14 +6,14 @@ import lombok.Data;
 @Data
 public class Sales {
     @JsonIgnore
-    private long salesNum;    // PK
-    private long cusNum;
-    private long braNum;
+    private long salesId;    // PK
+    private long customerId;
+    private long branchId;
     @JsonIgnore
-    private String salesTime; // TODO Date 타입???
+    private String salesTime;
     @JsonIgnore
-    private long recNum;
+    private long receiptId;
     @JsonIgnore
-    private boolean cancelCheck;    // whetherCanceled 정도가 더 낫지 않나...
-    private int amount;    // NUMBER(int자리수 -1)
+    private boolean cancelCheck;
+    private int amount;
 }

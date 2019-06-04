@@ -189,3 +189,7 @@
     line-height : 1.15;
     padding : .50rem;
 }
+
+#bill-list {
+    min-height : 25vh;
+}

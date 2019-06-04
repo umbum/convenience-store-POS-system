@@ -31,16 +31,15 @@ public class SalesService {
 
     @Transactional
     public String saveSalesInfo(SalesInfo salesInfo) {
-//        salesInfo.getSales().setRecNum(); 영수증 번호는 어떻게 할거야?
+//        salesInfo.getSales().setReceiptId(); 영수증 번호는 어떻게 할거야?
 
-
-        long salesNum = salesRepo.create(salesInfo.getSales());
+        long salesId = salesRepo.create(salesInfo.getSales());
 
         salesInfo.getSalesProductList().forEach(salesProduct -> {
-            salesProduct.setSalesNum(salesNum);
+            salesProduct.setSalesId(salesId);
         });
         salesInfo.getPaymentList().forEach(payment -> {
-            payment.setSalesNum(salesNum);
+            payment.setSalesId(salesId);
         });
 
         System.out.println(salesInfo.getSales());
