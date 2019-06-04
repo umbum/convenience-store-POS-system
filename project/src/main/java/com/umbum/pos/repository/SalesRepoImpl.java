@@ -17,7 +17,7 @@ public class SalesRepoImpl implements SalesRepo {
     }
 
     @Override
-    public long create(Sales sales) {
+    public int create(Sales sales) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
         sales.setSalesTime(dateFormat.format(new Date()));
 

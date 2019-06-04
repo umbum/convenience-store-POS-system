@@ -42,13 +42,13 @@ public class SalesService {
             payment.setSalesId(salesId);
         });
 
-        System.out.println(salesInfo.getSales());
-        for (Payment p : salesInfo.getPaymentList()) {
-            System.out.println(p);
-        }
-        for (SalesProduct s : salesInfo.getSalesProductList()) {
-            System.out.println(s);
-        }
+//        System.out.println(salesInfo.getSales());
+//        for (Payment p : salesInfo.getPaymentList()) {
+//            System.out.println(p);
+//        }
+//        for (SalesProduct s : salesInfo.getSalesProductList()) {
+//            System.out.println(s);
+//        }
 
         paymentRepo.createAll(salesInfo.getPaymentList());
         salesProductRepo.createAll(salesInfo.getSalesProductList());

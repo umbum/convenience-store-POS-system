@@ -14,12 +14,12 @@ public class SalesProductRepoImpl implements SalesProductRepo {
     }
 
     @Override
-    public void create(SalesProduct salesProduct) {
-
+    public int create(SalesProduct salesProduct) {
+        return 0;
     }
 
     @Override
-    public void createAll(List<SalesProduct> salesProductList) {
-
+    public int createAll(List<SalesProduct> salesProductList) {
+        return 0;
     }
 }

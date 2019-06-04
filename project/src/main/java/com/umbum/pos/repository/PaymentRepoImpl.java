@@ -14,12 +14,12 @@ public class PaymentRepoImpl implements PaymentRepo{
     }
 
     @Override
-    public long create(Payment payment) {
+    public int create(Payment payment) {
         return 0;
     }
 
     @Override
-    public long createAll(List<Payment> paymentList) {
+    public int createAll(List<Payment> paymentList) {
         return 0;
     }
 }
