@@ -17,6 +17,9 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven() {
+        url "https://code.lds.org/nexus/content/groups/main-repo"
+    }
 }
 
 dependencies {
@@ -29,4 +32,5 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    compile 'com.oracle:ojdbc6:11.2.0.3'
 }
