@@ -45,7 +45,7 @@
 
                                             <div class="col-sm-6">
                                                 <button type="button"
-                                                        class="btn cur-p btn-info pull-right discard-history-search-btn">
+                                                        class="btn cur-p btn-info pull-right disposal-history-search-btn">
                                                     <i
                                                             class="fa fa-search">&nbsp;&nbsp;조회</i>
                                                 </button>
@@ -69,7 +69,7 @@
                                     </div>
                                     <div class="layer w-100 mB-10">
                                         <table class="table table-striped umbum-table-tbody-row-height" id="datatable"
-                                               data-url="/discard-history/">
+                                               data-url="/disposal-history/">
                                             <thead class="text-center">
                                             <tr>
                                                 <th></th>
@@ -99,7 +99,7 @@
                                     </div>
                                     <div class="layer w-100 mB-10 text-center">
                                         <button type="button"
-                                                class="btn cur-p btn-lg btn-dark w-25" id="discard-history-save-btn">저장
+                                                class="btn cur-p btn-lg btn-dark w-25" id="disposal-history-save-btn">저장
                                         </button>
                                     </div>
                                 </div>
@@ -144,16 +144,16 @@
         const $datatable = $table.DataTable({
             "ajax": {
                 "url": $table.data("url") + "0",
-                "dataSrc": function (discardHistories) {
+                "dataSrc": function (disposalHistories) {
                     let hiddenOrderNum = 1;
-                    for (let i = 0; i < discardHistories.length; i++) {
-                        discardHistories[i].no = i + 1;
-                        discardHistories[i].hiddenOrder = hiddenOrderNum;
-                        discardHistories[i].status = "normal";
+                    for (let i = 0; i < disposalHistories.length; i++) {
+                        disposalHistories[i].no = i + 1;
+                        disposalHistories[i].hiddenOrder = hiddenOrderNum;
+                        disposalHistories[i].status = "normal";
                         hiddenOrderNum += 1;
                     }
-                    // appendDummyRow(discardHistories, pageLength, hiddenOrderNum)
-                    return discardHistories;
+                    // appendDummyRow(disposalHistories, pageLength, hiddenOrderNum)
+                    return disposalHistories;
                 }
             },
             "columnDefs": [
@@ -204,11 +204,11 @@
 
 
         /**
-         * 조회 버튼에 ajax click event로 discard-history 가져오기
+         * 조회 버튼에 ajax click event로 disposal-history 가져오기
          */
-        $(".discard-history-search-btn").on("click", function (e) {
+        $(".disposal-history-search-btn").on("click", function (e) {
             const selectedDate = $datepicker.val().split("/").join("");
-            $datatable.ajax.url('/discard-history/' + selectedDate).load();
+            $datatable.ajax.url('/disposal-history/' + selectedDate).load();
         });
 
         /**
@@ -301,13 +301,13 @@
         /**
          * 저장 버튼 event ajax post
          */
-        $("#discard-history-save-btn").on("click", function (e) {
-            sendDiscardHistoryToServer(e);
+        $("#disposal-history-save-btn").on("click", function (e) {
+            sendDisposalHistoryToServer(e);
         });
 
-        function sendDiscardHistoryToServer(e) {
+        function sendDisposalHistoryToServer(e) {
             $.ajax({
-                url: "/discard-history/" + $datepicker.val().split("/").join(""),
+                url: "/disposal-history/" + $datepicker.val().split("/").join(""),
                 type: "POST",
                 data: JSON.stringify({
                     "paymentList": 1,

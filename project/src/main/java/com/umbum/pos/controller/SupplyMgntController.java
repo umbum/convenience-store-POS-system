@@ -1,6 +1,5 @@
 package com.umbum.pos.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -9,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.umbum.pos.model.DiscardHistory;
+import com.umbum.pos.model.DisposalHistory;
 import com.umbum.pos.service.SupplyMgntService;
 
 @Controller
@@ -23,41 +22,32 @@ public class SupplyMgntController {
     /**
      * 폐기 등록 및 조회
      */
-    @GetMapping("/discard")
-    public String discard() {
-        // 폐기
-
-        return "discard.html";
+    @GetMapping("/disposal")
+    public String disposal() {
+        return "disposal.html";
     }
 
 
-    @GetMapping("/discard-history/{date}")
+    @GetMapping("/disposal-history/{date}")
     @ResponseBody
-    public List<DiscardHistory> getDiscardHistory(@PathVariable String date) {
-        List<DiscardHistory> discardHistoryList;
-        discardHistoryList = supplyMgntService.getDicardHistories(date);
+    public List<DisposalHistory> getDisposalHistory(@PathVariable String date) {
+        List<DisposalHistory> disposalHistoryList;
+        disposalHistoryList = supplyMgntService.getDisposalHistory(date);
 
-        return discardHistoryList;
+        return disposalHistoryList;
     }
 
-    @PostMapping("/discard-history/{date}")
+    @PostMapping("/disposal-history/{date}")
     @ResponseBody
-    public String postDiscardHistory(@PathVariable String date) {
+    public String postDisposalHistory(@PathVariable String date) {
         return "{}";
     }
 
     /**
-     * 입고(재고) 등록 및 조회
+     * 입고(재고) / 오출 등록 및 조회
      */
-    @GetMapping("/in-stock")
+    @GetMapping("/instock")
     public String inStock() {
-        return "in-stock.html";
-    }
-    /**
-     * 오출 등록 및 조회
-     */
-    @GetMapping("/mis-delivered")
-    public String misDelivered() {
-        return "mis-delivered.html";
+        return "instock.html";
     }
 }
