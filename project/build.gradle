@@ -28,7 +28,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-devtools'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-//    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.0.1'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
