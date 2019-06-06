@@ -23,7 +23,7 @@
                 <div class="full-container">
                     <div class="bgc-white">
                         <div class="peers fxw-nw ai-s">
-                            <div class="peer peer-greed w-70 p-20">
+                            <div class="peer peer-greed p-20">
                                 <div class="layers">
                                     <div class="layer w-100 mB-10">
                                         <h4 class="c-grey-900">상품 판매</h4>
@@ -67,7 +67,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="peer bdL p-20 w-30">
+                            <div class="peer bdL p-20 col-4">
                                 <div class="layers">
                                     <div class="layer w-100">
                                         <div class="layers">
@@ -89,7 +89,6 @@
                                                                pattern="\d{1,3}"
                                                                title="barcode는 1-3자리입니다."
                                                                placeholder="상품 바코드를 입력해주세요">
-
                                                     </div>
                                                 </form>
                                             </div>
@@ -136,21 +135,35 @@
                                                                                    title="카드 번호는 12자리입니다.">
                                                                         </div>
                                                                     </div>
-                                                                    <div class="row pY-5">
+                                                                    <div class="row pT-30 pB-10">
                                                                         <div class="col-6">
                                                                             <button type="submit"
-                                                                                    class="btn cur-p btn-lg btn-outline-success w-100 payment-method"
-                                                                                    id="credit-card-payment-btn"
-                                                                                    value="card">
+                                                                                    class="btn cur-p btn-lg btn-outline-success w-100 payment-method-btn"
+                                                                                    value="CARD">
                                                                                 신용카드
                                                                             </button>
                                                                         </div>
                                                                         <div class="col-6">
                                                                             <button type="submit"
-                                                                                    class="btn cur-p btn-lg btn-outline-success w-100 payment-method"
-                                                                                    id="cash-payment-btn"
-                                                                                    value="cash">
+                                                                                    class="btn cur-p btn-lg btn-outline-success w-100 payment-method-btn"
+                                                                                    value="CASH">
                                                                                 현금결제
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row pY-10">
+                                                                        <div class="col-6">
+                                                                            <button type="submit"
+                                                                                    class="btn cur-p btn-lg btn-outline-secondary w-100 payment-method-btn"
+                                                                                    value="KAKAOPAY">
+                                                                                카카오페이
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="col-6">
+                                                                            <button type="submit"
+                                                                                    class="btn cur-p btn-lg btn-outline-secondary w-100 payment-method-btn"
+                                                                                    value="PHONEPAY">
+                                                                                휴대폰결제
                                                                             </button>
                                                                         </div>
                                                                     </div>
@@ -176,13 +189,32 @@
                                                                             <span class="pull-right amount-remained">0</span>
                                                                         </h5>
                                                                     </div>
-                                                                    <div class="pT-10" id="bill-list">
+                                                                    <div class="pT-10 pR-10" id="bill-list">
                                                                     </div>
-
                                                                     <div class="bdT pT-10">
+                                                                        <h5 class="c-grey-900">
+                                                                            <span class="customer-name">-</span>
+                                                                            <small class="pull-right">고객님</small>
+                                                                        </h5>
+                                                                    </div>
+                                                                    <div>
+                                                                        <h5 class="c-grey-900">
+                                                                            <small>마일리지 적립 예정</small>
+                                                                            <span class="pull-right mileage-amount">0</span>
+                                                                        </h5>
+                                                                    </div>
+                                                                    <div>
+                                                                        <input type="tel" class="form-control"
+                                                                               id="customer-phone"
+                                                                               placeholder="01012349876"
+                                                                               required
+                                                                               pattern="[0-9]{9,11}"
+                                                                               title="고객 전화번호를 입력해주세요.">
+                                                                    </div>
+                                                                    <div class="pT-10">
                                                                         <button type="button"
-                                                                                class="btn cur-p btn-lg btn-info w-100">
-                                                                            <i class="fa fa-piggy-bank"></i>멤버십 적립*할인
+                                                                                class="btn cur-p btn-lg btn-info w-100 mileage-btn">
+                                                                            마일리지 적립
                                                                         </button>
                                                                     </div>
                                                                 </div>
@@ -207,7 +239,8 @@
                                             </div>
                                             <div class="layer w-100 mT-15">
                                                 <button type="button"
-                                                        class="btn cur-p btn-lg btn-outline-info w-100">상품직접선택
+                                                        class="btn cur-p btn-lg btn-outline-info w-100 clear-btn">
+                                                    입력 초기화
                                                 </button>
                                             </div>
                                             <div class="layer w-100 mT-15">
@@ -248,6 +281,9 @@
 
 <script>
     $(function () {
+        /**
+         * 물품 검색 (바코드 검색) 및 판매 예정 상품 테이블 row 추가 삭제
+         */
         const form = document.querySelector("#barcode-form");
         form.addEventListener("submit", function (e) {
             e.preventDefault();
@@ -263,14 +299,31 @@
                         updateEventInfoSection(product_info);
                         barcode_dom.val("");
                     } else {
-                        console.log("없는 상품 입니다")
-                        // 없는 상품인 경우. event section에 뭔가 띄워줄 것.
+                        var notice = new PNotify({
+                            title: '상품 정보가 없습니다.',
+                            text: `바코드 ${barcode_dom.val()} 에 해당하는 상품이 없습니다.`,
+                            type: 'notice',
+                            addclass: 'click-2-close'
+                        });
+
+                        notice.get().click(function () {
+                            notice.remove();
+                        });
                     }
 
                 },
                 error: function () {
-                    // 뭔가 문제가 있는 경우. 여기도 event section 활용하는게 좋겠다.
-                    console.log("product ajax에서 error");
+                    var notice = new PNotify({
+                        title: 'Error',
+                        text: '서버에 상품 정보를 받아 오는 과정에서 에러가 발생했습니다.',
+                        type: 'error',
+                        addclass: 'click-2-close',
+                        hide: false,
+                    });
+
+                    notice.get().click(function () {
+                        notice.remove();
+                    });
                 }
             });
 
@@ -332,6 +385,11 @@
             updateTotal();
         }
 
+        function removeRow(row) {
+            row.remove();
+            updateTotal();
+        }
+
         function updateEventInfoSection() {
 
         }
@@ -356,23 +414,31 @@
             $(".amount-remained").text(total_total - total_discount);
         }
 
-        function removeRow(row) {
-            row.remove();
+
+
+        $(".clear-btn").on("click", () => clearCntSales());
+        // 결제 완료 시 또는 판매 대기 상태에서 취소하고 싶을 때 clear
+        function clearCntSales() {
+            $(".payment-method-btn").prop("disabled", false);
+            $("#bill-list").empty();
+            $("#sales-table-body > tbody").empty();
+            $("#amount-to-pay").val("");
+            $("#card-number").val("");
+            $(".amount-paid").text("0");
             updateTotal();
+
+            // 마일리지
+            $('#customer-phone').prop('disabled', false).val("");
+            $('.mileage-btn').prop('disabled', false);
+            $(".customer-name").text("-")
+                .removeData("customer-id");
+            $(".mileage-amount").text(0);
         }
 
-
         /**
-         * 결제 관련
+         * 통합 결제 관련
          */
-        // modal 신용카드 결제 버튼 클릭 시
-        $("#credit-card-payment-btn").on("click", function (e) {
-            validateAndAppendBill(e);
-        });
-        // modal 현금결제 버튼 클릭 시
-        $("#cash-payment-btn").on("click", function (e) {
-            validateAndAppendBill(e);
-        });
+        $(".payment-method-btn").on("click", (e) => validateAndAppendBill(e));
 
         function applyValidation(dom) {
             if (!dom.checkValidity()) {
@@ -393,10 +459,10 @@
             const amount_remained = $(".amount-remained");
 
             let validity = false;
-            if (payment_method.value === "card") {
+            if (payment_method.value === "CARD") {
                 validity = applyValidation(amount_to_pay);
                 validity = applyValidation(card_number) && validity;    // to avoid short-circuit evaluation
-            } else if (payment_method.value === "cash") {
+            } else if (payment_method.value === "CASH") {
                 card_number.classList.remove("invalid");
                 validity = applyValidation(amount_to_pay);
             } else {
@@ -427,14 +493,18 @@
 
         // 완납 시 트리거.
         function processFullPayment() {
-            $(".payment-method").prop("disabled", true);
+            $(".payment-method-btn").prop("disabled", true);
 
+            const customerId = $(".customer-name").data("customer-id");
             const sales = {
-                "customerId": 1234,
-                "branchId": 1111,
-                "amount": $("#total-payment").text()
+                "customerId": (customerId !== undefined) ? customerId : null,
+                "amount": $(".total-payment").text()
             };
 
+            const mileageInfo = {
+                "customerId": (customerId !== undefined) ? customerId : null,
+                "earned-mileage" : $(".mileage-amount").text()
+            };
 
             const sales_products = [];
             $("#sales-table-body").find("tr").each(function (idx, dom) {
@@ -448,7 +518,7 @@
             const payments = [];
             $("#bill-list").find("h5").each(function (idx, dom) {
                 payments.push({
-                    "method": $(dom).find("small").data("value"),
+                    "paymentCode": $(dom).find("small").data("value"),
                     "amount": $(dom).find("span").text()
                 })
             });
@@ -459,20 +529,16 @@
                 data: JSON.stringify({
                     "paymentList": payments,
                     "sales": sales,
-                    "salesProductList": sales_products
+                    "salesProductList": sales_products,
+                    // "mileageInfo": mileageInfo
                 }),
                 contentType: 'application/json;charset=UTF-8',
                 success: function (str) {
-                    // 결제 완료 pnotify
+                    console.log(str);
                     var notice = new PNotify({
-                        title: str,
+                        title: "거래 완료",
                         text: '거래가 정상적으로 완료되었습니다.',
                         type: "success",
-                        // addclass: 'click-2-close',
-                        // buttons: {
-                        //     closer: false,
-                        //     sticker: false
-                        // }
                     });
 
                     notice.get().click(function () {
@@ -503,22 +569,63 @@
             });
         }
 
+        /**
+         * 마일리지 (멤버쉽) 적립 관련
+         * DOM 및 value에 mileage 정보를 설정.
+         * 마일리지만 적립하고 튀는 경우를 방지하기 위해 일단 유효한 유저인지만 체크하고 클라이언트 측에 저장해두었다가
+         * 추후 결제 요청 시 마일리지 적립 정보도 함께 전송되어 처리한다.
+         */
+        $(".mileage-btn").on("click", () => setMileageInfo());
+        function setMileageInfo() {
+            const customerPhoneDom = document.querySelector("#customer-phone");
+            if (!applyValidation(customerPhoneDom)) {
+                return;
+            }
 
-        // 결제 완료 시 또는 판매 대기 상태에서 취소하고 싶을 때 clear
-        function clearCntSales() {
-            $(".payment-method").prop("disabled", false);
-            $("#bill-list").empty();
-            $("#sales-table-body > tbody").empty();
-            $("#amount-to-pay").val("");
-            $("#card-number").val("");
-            $(".amount-paid").text("0");
-            updateTotal();
+            // 해당 phone 번호에 해당하는 유저가 있는지 확인하고 있다면 customerId와 Name을 들고와 setting해놓는다.
+            $.ajax({
+                url: `/customer/${customerPhoneDom.value}`,
+                type: "GET",
+                contentType: 'application/json;charset=UTF-8',
+                success: function (customerInfo) {
+                    if (customerInfo !== "") {
+                        $('#customer-phone').prop('disabled', true);
+                        $('.mileage-btn').prop('disabled', true);
+                        $(".customer-name").text(customerInfo.cusName)
+                            .data("customer-id", customerInfo.customerId);
+                        $(".mileage-amount").text(parseInt(parseInt($(".total-payment").text()) / 100 ));
+                    } else {
+                        var notice = new PNotify({
+                            title: '회원 정보가 없습니다.',
+                            text: `전화번호가 ${customerPhoneDom.value} 에 해당하는 회원이 없습니다.`,
+                            type: 'notice',
+                            addclass: 'click-2-close'
+                        });
+
+                        notice.get().click(function () {
+                            notice.remove();
+                        });
+                    }
+
+                },
+                error: function () {
+                    var notice = new PNotify({
+                        title: 'Error',
+                        text: '서버에서 고객 정보를 받아 오는 과정에서 에러가 발생했습니다.',
+                        type: 'error',
+                        addclass: 'click-2-close',
+                        hide: false,
+                    });
+
+                    notice.get().click(function () {
+                        notice.remove();
+                    });
+                }
+            });
         }
 
     });
 
-
 </script>
-</div>
 </body>
 </html>

@@ -43,7 +43,6 @@ public class SalesController {
         }
         else {
             result = "FAIL";
-            // { "result" : "FAIL", "reason" : "NOT_VALID" }
         }
 
         return result;

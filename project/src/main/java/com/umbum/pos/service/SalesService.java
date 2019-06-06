@@ -31,8 +31,8 @@ public class SalesService {
 
     @Transactional
     public String saveSalesInfo(SalesInfo salesInfo) {
-//        salesInfo.getSales().setReceiptId(); 영수증 번호는 어떻게 할거야?
 
+        salesInfo.getSales().setBranchId(1);    // TODO : Account 정보를 가져와서 세팅해줄 것.
         long salesId = salesRepo.create(salesInfo.getSales());
 
         salesInfo.getSalesProductList().forEach(salesProduct -> {
@@ -42,16 +42,18 @@ public class SalesService {
             payment.setSalesId(salesId);
         });
 
-//        System.out.println(salesInfo.getSales());
-//        for (Payment p : salesInfo.getPaymentList()) {
-//            System.out.println(p);
-//        }
-//        for (SalesProduct s : salesInfo.getSalesProductList()) {
-//            System.out.println(s);
-//        }
 
+        // 오라클은 update 성공 시 원소가 -2 또는 양수 리턴값을 반환한다. 따라서 int[]는 원소가 -2 또는 양수이고 길이가 update문의 수행 횟수인 배열.
         paymentRepo.createAll(salesInfo.getPaymentList());
         salesProductRepo.createAll(salesInfo.getSalesProductList());
+
+        //        System.out.println(salesInfo.getSales());
+        //        for (Payment p : salesInfo.getPaymentList()) {
+        //            System.out.println(p);
+        //        }
+        //        for (SalesProduct s : salesInfo.getSalesProductList()) {
+        //            System.out.println(s);
+        //        }
 
         String result = "SUCCESS";
 

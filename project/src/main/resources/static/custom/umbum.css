@@ -191,5 +191,6 @@
 }
 
 #bill-list {
-    min-height : 25vh;
+    height : 18vh;
+    overflow-y : scroll;
 }
