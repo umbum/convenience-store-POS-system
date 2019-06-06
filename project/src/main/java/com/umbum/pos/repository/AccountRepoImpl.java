@@ -1,6 +1,6 @@
 package com.umbum.pos.repository;
 
-import java.util.HashMap;
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -38,9 +38,12 @@ public class AccountRepoImpl implements AccountRepo {
             authorities.add(new SimpleGrantedAuthority(authority));
         }
 
+        BigDecimal branchId = (BigDecimal)accountRecord.get("BRANCH_ID");
+
         return new Account(
-            (String)accountRecord.get("username"),
-            (String)accountRecord.get("password"),
+            (String)accountRecord.get("USERNAME"),
+            (String)accountRecord.get("PASSWORD"),
+            branchId.longValueExact(),
             authorities);
     }
 

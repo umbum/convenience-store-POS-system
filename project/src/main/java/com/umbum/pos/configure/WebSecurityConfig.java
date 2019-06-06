@@ -19,19 +19,12 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    private final AuthenticationSuccessHandler authSuccessHandler;
-    private final AuthenticationFailureHandler authFailureHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
-    public WebSecurityConfig(AuthenticationFailureHandler authFailureHandler,
-        AuthenticationSuccessHandler authSuccessHandler) {
-        this.authFailureHandler = authFailureHandler;
-        this.authSuccessHandler = authSuccessHandler;
-    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

@@ -27,7 +27,8 @@ public class AccountService implements UserDetailsService {
         try {
             return accountRepo.read(username);
         } catch (Exception e) {
-            throw new UsernameNotFoundException("ID가 없음.");
+            log.warn("{} 계정이 없음.", username);
+            throw new UsernameNotFoundException(username);
         }
     }
 

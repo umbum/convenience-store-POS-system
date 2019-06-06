@@ -50,7 +50,7 @@ public class IndexController {
         int result = accountService.registerAccount(new Account(
             accountInfo.get("username"),
             accountInfo.get("password"),
-            accountInfo.get("branchId"),
+            Long.parseLong(accountInfo.get("branchId")),
             authorities
         ));
         return String.valueOf(result);
