@@ -33,13 +33,10 @@ public class SalesController {
     @PostMapping()
     @ResponseBody
     public String postSales(@RequestBody SalesInfo salesInfo, @AuthenticationPrincipal Account account) {
-        String result = null;
-        if (salesService.isValidSalesInfo(salesInfo)) {
-            result = salesService.saveSalesInfo(salesInfo, account);
+        if (!salesService.isValidSalesInfo(salesInfo)) {
+            return "FAIL";
         }
-        else {
-            result = "FAIL";
-        }
-        return result;
+
+        return salesService.saveSalesInfo(salesInfo, account);
     }
 }
