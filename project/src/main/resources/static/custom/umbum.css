@@ -1,0 +1,196 @@
+
+#sales-table-head th:nth-of-type(1),
+#sales-table-body td:nth-of-type(1),
+#sales-table-foot td:nth-of-type(1) {
+    width: 50px;
+    text-align: right;
+}
+#sales-table-head th:nth-of-type(3),
+#sales-table-body td:nth-of-type(3),
+#sales-table-foot td:nth-of-type(3) {
+    width: 100px;
+    text-align: right;
+}
+#sales-table-head th:nth-of-type(4),
+#sales-table-body td:nth-of-type(4),
+#sales-table-foot td:nth-of-type(4) {
+    width: 60px;
+    text-align: right;
+}
+#sales-table-head th:nth-of-type(5),
+#sales-table-body td:nth-of-type(5),
+#sales-table-foot td:nth-of-type(5) {
+    width: 100px;
+    text-align: right;
+}
+#sales-table-head th:nth-of-type(6),
+#sales-table-body td:nth-of-type(6),
+#sales-table-foot td:nth-of-type(6){
+    width: 100px;
+    text-align: right;
+}
+#sales-table-head th:nth-of-type(7),
+#sales-table-body td:nth-of-type(7),
+#sales-table-foot td:nth-of-type(7){
+    display: none;
+}
+
+#sales-table-head th:nth-of-type(8),
+#sales-table-body td:nth-of-type(8),
+#sales-table-foot td:nth-of-type(8){
+    width: 60px;
+    text-align: center;
+}
+
+#sales-table-foot {
+    font-weight: bold;
+}
+
+#sales-table-foot td:nth-of-type(2) {
+    text-align: center;
+}
+
+.scrollable-tbody-wrapper {
+    overflow: auto;
+    height: calc(100vh - 320px);
+}
+
+
+/* Form - Input Icon */
+.input-group-icon,
+.input-search {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.input-group-icon input.form-control,
+.input-search input.form-control {
+    padding-right: 36px;
+}
+
+.input-group-icon input.form-control:first-child, .input-group-icon input.form-control:last-child,
+.input-search input.form-control:first-child,
+.input-search input.form-control:last-child {
+    border-radius: 4px;
+}
+
+.input-group-icon .input-group-btn,
+.input-search .input-group-btn {
+    border-radius: 500px;
+    width: 0;
+}
+
+.input-group-icon .input-group-btn:first-child, .input-group-icon .input-group-btn:last-child,
+.input-search .input-group-btn:first-child,
+.input-search .input-group-btn:last-child {
+    border-radius: 500px;
+}
+
+.input-group-icon .input-group-btn button,
+.input-search .input-group-btn button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    border: 0;
+    z-index: 3;
+    background: transparent;
+}
+
+.input-group-icon .input-group-btn button:active,
+.input-search .input-group-btn button:active {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.input-group-icon .input-group-btn:last-child button,
+.input-search .input-group-btn:last-child button {
+    left: auto;
+    right: 0;
+}
+
+.input-group-icon .input-group-btn + input.form-control,
+.input-search .input-group-btn + input.form-control {
+    padding-right: 12px;
+    padding-left: 36px;
+}
+
+.input-group-icon .input-group-addon,
+.input-search .input-group-addon {
+    position: relative;
+    padding: 0;
+    border: 0 none;
+    width: 0;
+}
+
+.input-group-icon .input-group-addon span.icon,
+.input-search .input-group-addon span.icon {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    border: 0;
+    z-index: 3;
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+    padding: 6px 12px;
+    background: transparent;
+    line-height: 1.42857143;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    pointer-events: none;
+}
+
+.input-group-icon .input-group-addon span.icon.icon-lg,
+.input-search .input-group-addon span.icon.icon-lg {
+    padding: 10px 14px;
+    font-size: 18px;
+}
+
+.input-group-icon .input-group-addon:last-child span.icon,
+.input-search .input-group-addon:last-child span.icon {
+    left: auto;
+    right: 0;
+}
+
+.input-group-icon .input-group-addon + input.form-control,
+.input-search .input-group-addon + input.form-control {
+    padding-right: 12px;
+    padding-left: 36px;
+}
+
+.input-group.input-group-icon>.form-control:not(:first-child) {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+.bill-list {
+    overflow:auto;
+    height: calc(100vh - 550px);
+}
+
+.invalid {
+    border-color: red;
+}
+
+
+.form-group {
+    margin-bottom : 0px;
+}
+
+.umbum-label {
+    font-size :1.2em;
+}
+
+.umbum-table-tbody-row-height tbody td {
+    line-height : 1.15;
+    padding : .50rem;
+}
+
+#bill-list {
+    height : 18vh;
+    overflow-y : scroll;
+}

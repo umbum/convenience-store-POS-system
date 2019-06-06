@@ -1,0 +1,357 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="fragments/general.html :: header"></div>
+    <link href="/custom/pnotify/pnotify.custom.css" rel="stylesheet">
+    <link href="/custom/daterangepicker/daterangepicker.css" rel="stylesheet">
+    <link href="/custom/DataTables/datatables.css" rel="stylesheet">
+</head>
+<body class="app">
+<div id="loader">
+    <div class="spinner"></div>
+</div>
+<script>window.addEventListener('load', function load() {
+    const loader = document.getElementById('loader');
+    setTimeout(function () {
+        loader.classList.add('fadeOut');
+    }, 300);
+});</script>
+<div>
+    <div th:replace="fragments/general.html :: sidebar"></div>
+    <div class="page-container">
+        <div th:replace="fragments/general.html :: navbar"></div>
+        <main class="main-content bgc-grey-100">
+            <div id="mainContent">
+                <div class="full-container">
+                    <div class="bgc-white remain-height">
+                        <div class="peers fxw-nw ai-s">
+                            <div class="peer bdL p-20 w-100">
+                                <div class="layers pY-10 pX-20">
+                                    <div class="layer w-100">
+                                        <h4 class="c-grey-900 bdB">수불관리 오출등록</h4>
+                                    </div>
+                                    <div class="layer w-100 mB-10 p-10 bdB">
+                                        <div class="form-group row">
+                                            <label for="date-picker"
+                                                   class="col-sm-2 col-form-label c-grey-900 umbum-label">폐기일자</label>
+
+                                            <div class="col-sm-4 input-daterange input-group input-group-icon">
+                                    <span class="input-group-addon">
+                                       <span class="icon"><i class="fa fa-calendar"></i></span>
+                                    </span>
+                                                <input type="text" id="date-picker" class="form-control text-center"/>
+                                            </div>
+
+
+                                            <div class="col-sm-6">
+                                                <button type="button"
+                                                        class="btn cur-p btn-info pull-right discard-history-search-btn">
+                                                    <i
+                                                            class="fa fa-search">&nbsp;&nbsp;조회</i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="layer w-100 mB-10">
+                                        <form id="product-code-form">
+                                            <div class="input-group input-group-icon">
+                                                        <span class="input-group-addon">
+                                                            <span class="icon"><i class="fa fa-barcode"></i></span>
+                                                        </span>
+                                                <input type="text" id="product-code" class="form-control"
+                                                       required maxlength="13" pattern="\d{1}|\d{13}"
+                                                       title="product code는 13자리입니다."
+                                                       placeholder="상품번호를 입력해주세요">
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="layer w-100 mB-10">
+                                        <table class="table table-striped umbum-table-tbody-row-height" id="datatable"
+                                               data-url="/discard-history/">
+                                            <thead class="text-center">
+                                            <tr>
+                                                <th></th>
+                                                <th></th>
+                                                <th>No</th>
+                                                <th>상품코드</th>
+                                                <th>상품명</th>
+                                                <th>폐기수량</th>
+                                                <th>폐기일시</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody class="table-bordered">
+
+                                            </tbody>
+                                            <tfoot>
+                                            <tr>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th class="text-center">합계</th>
+                                                <th class="total-quantity text-right"></th>
+                                                <th></th>
+                                            </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                    <div class="layer w-100 mB-10 text-center">
+                                        <button type="button"
+                                                class="btn cur-p btn-lg btn-dark w-25" id="discard-history-save-btn">저장
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!--        <footer th:replace="fragments/general.html :: footer"></footer>-->
+    </div>
+</div>
+<script th:replace="fragments/general.html :: common-script"></script>
+<script type="text/javascript" src="/custom/jquery-3.4.1.js"></script>
+<script type="text/javascript" src="/custom/pnotify/pnotify.custom.js"></script>
+<script type="text/javascript" src="/custom/moment.min.js"></script>
+<script type="text/javascript" src="/custom/daterangepicker/daterangepicker.js"></script>
+<script type="text/javascript" src="/custom/DataTables/datatables.js"></script>
+
+<script>
+    $(function () {
+
+        /**
+         * data range picker init
+         */
+        const $datepicker = $('#date-picker');
+        $datepicker.daterangepicker({
+            "singleDatePicker": true,
+            locale: {
+                format: 'YYYY/MM/DD'
+            }
+        }, function (start, end, label) {
+            // callback
+        });
+
+
+        /**
+         *  DataTable init
+         */
+        var $table = $('#datatable');
+        const pageLength = 6;
+        const $datatable = $table.DataTable({
+            "ajax": {
+                "url": $table.data("url") + "0",
+                "dataSrc": function (discardHistories) {
+                    let hiddenOrderNum = 1;
+                    for (let i = 0; i < discardHistories.length; i++) {
+                        discardHistories[i].no = i + 1;
+                        discardHistories[i].hiddenOrder = hiddenOrderNum;
+                        discardHistories[i].status = "normal";
+                        hiddenOrderNum += 1;
+                    }
+                    // appendDummyRow(discardHistories, pageLength, hiddenOrderNum)
+                    return discardHistories;
+                }
+            },
+            "columnDefs": [
+                {"targets": 0, "data": "hiddenOrder", "orderable": false, "visible": false, "searchable": false},
+                {"targets": 1, "data": "status", "orderable": false, "visible": false, "searchable": false, className: "status"},
+                {
+                    "targets": 2,
+                    "searchable": false,
+                    "data": "no",
+                    "width": "10px",
+                    className: 'text-center'
+                },
+                {
+                    "targets": 3,
+                    "data": "productCode",
+                    "width": "150px",
+                    className: 'text-center product-code'
+                },
+                {"targets": 4, "data": "productName", "orderable": false},
+                {
+                    "targets": 5,
+                    "data": "quantity",
+                    "width": "90px",
+                    "orderable": false,
+                    "searchable": false,
+                    className: 'text-center quantity'
+                },
+                {
+                    "targets": 6,
+                    "data": "date",
+                    "width": "150px",
+                    "orderable": false,
+                    "searchable" : false,
+                    className: 'text-center'},
+            ],
+            "autoWidth": false,
+            "pageLength": pageLength,  // 한 페이지의 row 개수 조절하기
+            "lengthChange": false,     // 상단의 row 개수 선택 버튼 show # entries 안뜨게하기
+            "language": {
+                "searchPlaceholder": "search"
+            },
+            "retrieve": true,
+            "footerCallback": function( tfoot, dataList, start, end, display ) {
+                $(tfoot).find('.total-quantity')
+                    .html(dataList.reduce((a, data) => a + data.quantity, 0));
+            }
+        });
+
+
+        /**
+         * 조회 버튼에 ajax click event로 discard-history 가져오기
+         */
+        $(".discard-history-search-btn").on("click", function (e) {
+            const selectedDate = $datepicker.val().split("/").join("");
+            $datatable.ajax.url('/discard-history/' + selectedDate).load();
+        });
+
+        /**
+         * 상품 코드 검색 및 row 추가
+         */
+        const form = document.querySelector("#product-code-form");
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            // product_info를 ajax request
+            const product_code_dom = $('#product-code');
+            $.ajax({
+                url: `/product/${product_code_dom.val()}`,
+                type: "GET",
+                contentType: 'application/json;charset=UTF-8',
+                success: function (product_info) {
+                    if (product_info !== "") {
+
+                        addDataTableRow(product_info);
+                        // updateEventInfoSection(product_info);
+                        product_code_dom.val("");
+                    } else {
+                        var notice = new PNotify({
+                            title: 'Notice',
+                            text: '없는 상품입니다.',
+                            type: 'notice',
+                            addclass: 'click-2-close',
+                            hide: false,
+                        });
+
+                        notice.get().click(function () {
+                            notice.remove();
+                        });
+                    }
+
+                },
+                error: function () {
+                    var notice = new PNotify({
+                        title: 'Error',
+                        text: '서버에 폐기 내역을 받아 오는 과정에서 에러가 발생했습니다.',
+                        type: 'error',
+                        addclass: 'click-2-close',
+                        hide: false,
+                    });
+
+                    notice.get().click(function () {
+                        notice.remove();
+                    });
+                }
+            });
+
+        });
+
+
+        function addDataTableRow(product_info) {
+            const table = $datatable;
+
+            // datatable은 무조건 rowIdx를 구해야 한다. 그냥 내가 원하는 row 반환받고 거기다가 뭔가를 적용하면 바보같이 동작함. 왜 이렇게 만들었는지 모르겠음..
+            const rowIdx  = table.rows().eq( 0 ).filter( function (rowIdx) {
+                return table.cell( rowIdx, ".product-code" ).data() === product_info.code;
+            });
+
+            if (rowIdx.length !== 0) {
+                // 기존 테이블에 존재하던 상품이면 quantity만 증가
+                const quantity_cell = table.cell(rowIdx, ".quantity");
+                quantity_cell.data(quantity_cell.data() + 1).draw();
+                $(quantity_cell.node()).css("color", "red");
+                if (table.cell(rowIdx, ".status").data() === "normal") {
+                    table.cell(rowIdx, ".status").data("update");
+                }
+            }
+            else {
+                // 기존 테이블에 없던 상품이면 추가.
+
+                const lastRow = table.row(":last").data();
+                const newRow = table.row.add({
+                    "hiddenOrder" : (lastRow) ? lastRow.hiddenOrder + 1 : 1,
+                    "status" : "create",
+                    "no" : (lastRow) ? lastRow.no + 1 : 1,
+                    "productCode" : product_info.code,
+                    "productName" : product_info.name,
+                    "quantity" : 1,
+                    "date" : $("#date-picker").val().split("/").join("")
+                }).draw().node();
+                $(newRow).css("color", "red");
+            }
+
+        }
+
+
+        /**
+         * 저장 버튼 event ajax post
+         */
+        $("#discard-history-save-btn").on("click", function (e) {
+            sendDiscardHistoryToServer(e);
+        });
+
+        function sendDiscardHistoryToServer(e) {
+            $.ajax({
+                url: "/discard-history/" + $datepicker.val().split("/").join(""),
+                type: "POST",
+                data: JSON.stringify({
+                    "payments": 1,
+                    "sales": 1,
+                    "sales_products": 1
+                }),
+                contentType: 'application/json;charset=UTF-8',
+                success: function (str) {
+                    // 저장 완료 pnotify
+                    $(e.target).prop("disabled", true);
+                    var notice = new PNotify({
+                        title: "SUCCESS",
+                        text: '저장 완료',
+                        type: "success",
+                        // addclass: 'click-2-close',
+                        // buttons: {
+                        //     closer: false,
+                        //     sticker: false
+                        // }
+                    });
+
+                    notice.get().click(function () {
+                        notice.remove();
+                    });
+                },
+                error: function () {
+                    var notice = new PNotify({
+                        title: 'Error',
+                        text: '서버에 폐기 내역을 전송하는 과정에서 에러가 발생했습니다.',
+                        type: 'error',
+                        addclass: 'click-2-close',
+                        hide: false,
+                    });
+
+                    notice.get().click(function () {
+                        notice.remove();
+                    });
+                }
+            });
+        }
+
+
+    });
+
+
+</script>
+</body>
+</html>

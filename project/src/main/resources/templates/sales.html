@@ -1,0 +1,631 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="fragments/general.html :: header"></div>
+    <link href="/custom/pnotify/pnotify.custom.css" rel="stylesheet">
+</head>
+<body class="app">
+<div id="loader">
+    <div class="spinner"></div>
+</div>
+<script>window.addEventListener('load', function load() {
+    const loader = document.getElementById('loader');
+    setTimeout(function () {
+        loader.classList.add('fadeOut');
+    }, 300);
+});</script>
+<div>
+    <div th:replace="fragments/general.html :: sidebar"></div>
+    <div class="page-container">
+        <div th:replace="fragments/general.html :: navbar"></div>
+        <main class="main-content bgc-grey-100">
+            <div id="mainContent">
+                <div class="full-container">
+                    <div class="bgc-white">
+                        <div class="peers fxw-nw ai-s">
+                            <div class="peer peer-greed p-20">
+                                <div class="layers">
+                                    <div class="layer w-100 mB-10">
+                                        <h4 class="c-grey-900">상품 판매</h4>
+                                    </div>
+                                    <div class="layer w-100">
+                                        <table class="table" id="sales-table-head">
+                                            <thead class="thead-dark">
+                                            <tr>
+                                                <th scope="col">No</th>
+                                                <th scope="col">상품명</th>
+                                                <th scope="col">단가</th>
+                                                <th scope="col">수량</th>
+                                                <th scope="col">금액</th>
+                                                <th scope="col">할인</th>
+                                                <th scope="col"></th>    <!-- hidden 상품 코드 -->
+                                                <th scope="col"></th>    <!-- cancel icon -->
+                                            </tr>
+                                            </thead>
+                                        </table>
+                                        <div class="scrollable-tbody-wrapper">
+                                            <table class="table" id="sales-table-body">
+                                                <tbody>
+                                                <!-- 판매 예정 상품 row가 들어올 곳 -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <table class="table" id="sales-table-foot">
+                                            <tfoot>
+                                            <tr>
+                                                <td></td>
+                                                <td>합계 수량 / 금액 / 할인</td>
+                                                <td></td>
+                                                <td class="total-quantity">0</td>
+                                                <td class="total-total">0</td>
+                                                <td class="total-discount">0</td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="peer bdL p-20 col-4">
+                                <div class="layers">
+                                    <div class="layer w-100">
+                                        <div class="layers">
+                                            <div class="layer w-100 mT-15">
+                                                <div class="p-30 bgc-grey-200 layer w-100 text-center">
+                                                    <p></p>
+                                                    <i class="ti-gift pR-10" style="font-size:30px"></i>
+                                                    <p>행사 상품 정보</p>
+                                                </div>
+                                            </div>
+                                            <div class="layer w-100 mT-15">
+                                                <form id="barcode-form">
+                                                    <div class="input-group input-group-icon">
+                                                        <span class="input-group-addon">
+                                                            <span class="icon"><i class="fa fa-barcode"></i></span>
+                                                        </span>
+                                                        <input type="text" id="barcode" class="form-control"
+                                                               required maxlength="13"
+                                                               pattern="\d{1,3}"
+                                                               title="barcode는 1-3자리입니다."
+                                                               placeholder="상품 바코드를 입력해주세요">
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="layer w-100 mT-15">
+                                                <button type="button"
+                                                        class="btn cur-p btn-lg btn-outline-success w-100"
+                                                        data-toggle="modal"
+                                                        data-target="#payment-modal"
+                                                        data-backdrop="static">통합 결제
+                                                </button>
+                                                <div class="modal fade" id="payment-modal" tabindex="-1" role="dialog"
+                                                     aria-labelledby="payment-modal-label" aria-hidden="true">
+                                                    <div class="modal-dialog modal-lg" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h4 class="modal-title c-grey-900"
+                                                                    id="payment-modal-label">
+                                                                    통합 결제</h4>
+                                                                <button type="button" class="close" data-dismiss="modal"
+                                                                        aria-label="Close"><span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body row">
+                                                                <div class="col-8">
+                                                                    <div class="form-group row">
+                                                                        <label for="amount-to-pay"
+                                                                               class="col-sm-4 col-form-label">
+                                                                            <h5 class="c-grey-900">결제할 금액 입력</h5>
+                                                                        </label>
+                                                                        <div class="col-sm-8">
+                                                                            <input type="text" class="form-control"
+                                                                                   id="amount-to-pay" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group row">
+                                                                        <label for="card-number"
+                                                                               class="col-sm-4 col-form-label">
+                                                                            <h5 class="c-grey-900">카드번호</h5></label>
+                                                                        <div class="col-sm-8">
+                                                                            <input type="text" class="form-control"
+                                                                                   id="card-number"
+                                                                                   placeholder="카드결제 시 사용"
+                                                                                   minlength=12 maxlength=12 required
+                                                                                   title="카드 번호는 12자리입니다.">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row pT-30 pB-10">
+                                                                        <div class="col-6">
+                                                                            <button type="submit"
+                                                                                    class="btn cur-p btn-lg btn-outline-success w-100 payment-method-btn"
+                                                                                    value="CARD">
+                                                                                신용카드
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="col-6">
+                                                                            <button type="submit"
+                                                                                    class="btn cur-p btn-lg btn-outline-success w-100 payment-method-btn"
+                                                                                    value="CASH">
+                                                                                현금결제
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row pY-10">
+                                                                        <div class="col-6">
+                                                                            <button type="submit"
+                                                                                    class="btn cur-p btn-lg btn-outline-secondary w-100 payment-method-btn"
+                                                                                    value="KAKAOPAY">
+                                                                                카카오페이
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="col-6">
+                                                                            <button type="submit"
+                                                                                    class="btn cur-p btn-lg btn-outline-secondary w-100 payment-method-btn"
+                                                                                    value="PHONEPAY">
+                                                                                휴대폰결제
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-4 bdL">
+                                                                    <div class="bdB pB-10">
+                                                                        <h3 class="c-grey-900">
+                                                                            <small>총 <span
+                                                                                    class="total-quantity">0</span>개
+                                                                            </small>
+                                                                            <span class="pull-right total-payment">0</span>
+                                                                        </h3>
+                                                                    </div>
+                                                                    <div class="pT-10">
+                                                                        <h5 class="c-grey-900">
+                                                                            <small>결제한 금액</small>
+                                                                            <span class="pull-right amount-paid">0</span>
+                                                                        </h5>
+                                                                    </div>
+                                                                    <div class="bdB pB-10">
+                                                                        <h5 class="c-grey-900">
+                                                                            <small>남은 금액</small>
+                                                                            <span class="pull-right amount-remained">0</span>
+                                                                        </h5>
+                                                                    </div>
+                                                                    <div class="pT-10 pR-10" id="bill-list">
+                                                                    </div>
+                                                                    <div class="bdT pT-10">
+                                                                        <h5 class="c-grey-900">
+                                                                            <span class="customer-name">-</span>
+                                                                            <small class="pull-right">고객님</small>
+                                                                        </h5>
+                                                                    </div>
+                                                                    <div>
+                                                                        <h5 class="c-grey-900">
+                                                                            <small>마일리지 적립 예정</small>
+                                                                            <span class="pull-right mileage-amount">0</span>
+                                                                        </h5>
+                                                                    </div>
+                                                                    <div>
+                                                                        <input type="tel" class="form-control"
+                                                                               id="customer-phone"
+                                                                               placeholder="01012349876"
+                                                                               required
+                                                                               pattern="[0-9]{9,11}"
+                                                                               title="고객 전화번호를 입력해주세요.">
+                                                                    </div>
+                                                                    <div class="pT-10">
+                                                                        <button type="button"
+                                                                                class="btn cur-p btn-lg btn-info w-100 mileage-btn">
+                                                                            마일리지 적립
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary"
+                                                                        data-dismiss="modal">
+                                                                    Close
+                                                                </button>
+                                                                <button type="button" class="btn btn-primary">Save
+                                                                    changes
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="layer w-100 mT-15">
+                                                <button type="button"
+                                                        class="btn cur-p btn-lg btn-outline-secondary w-100">서비스
+                                                </button>
+                                            </div>
+                                            <div class="layer w-100 mT-15">
+                                                <button type="button"
+                                                        class="btn cur-p btn-lg btn-outline-info w-100 clear-btn">
+                                                    입력 초기화
+                                                </button>
+                                            </div>
+                                            <div class="layer w-100 mT-15">
+                                                <button type="button"
+                                                        class="btn cur-p btn-lg btn-outline-danger w-100">환불
+                                                </button>
+                                            </div>
+
+                                        </div>
+                                        <div class="peers pT-20 mT-20 bdT fxw-nw jc-sb ta-c gap-10">
+                                            <div class="peer">
+                                                <div class="easy-pie-chart" data-size="80" data-percent="75"
+                                                     data-bar-color="#f44336"><span></span></div>
+                                                <h6 class="fsz-sm">New Users</h6></div>
+                                            <div class="peer">
+                                                <div class="easy-pie-chart" data-size="80" data-percent="50"
+                                                     data-bar-color="#2196f3"><span></span></div>
+                                                <h6 class="fsz-sm">New Purchases</h6></div>
+                                            <div class="peer">
+                                                <div class="easy-pie-chart" data-size="80" data-percent="90"
+                                                     data-bar-color="#ff9800"><span></span></div>
+                                                <h6 class="fsz-sm">Bounce Rate</h6></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!--        <footer th:replace="fragments/general.html :: footer"></footer>-->
+    </div>
+</div>
+<script th:replace="fragments/general.html :: common-script"></script>
+<script type="text/javascript" src="/custom/jquery-3.4.1.js"></script>
+<script src="/custom/pnotify/pnotify.custom.js"></script>
+
+<script>
+    $(function () {
+        /**
+         * 물품 검색 (바코드 검색) 및 판매 예정 상품 테이블 row 추가 삭제
+         */
+        const form = document.querySelector("#barcode-form");
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            // product_info를 ajax request
+            const barcode_dom = $('#barcode');
+            $.ajax({
+                url: `/product/${barcode_dom.val()}`,
+                type: "GET",
+                contentType: 'application/json;charset=UTF-8',
+                success: function (product_info) {
+                    if (product_info !== "") {
+                        addRow(product_info);
+                        updateEventInfoSection(product_info);
+                        barcode_dom.val("");
+                    } else {
+                        var notice = new PNotify({
+                            title: '상품 정보가 없습니다.',
+                            text: `바코드 ${barcode_dom.val()} 에 해당하는 상품이 없습니다.`,
+                            type: 'notice',
+                            addclass: 'click-2-close'
+                        });
+
+                        notice.get().click(function () {
+                            notice.remove();
+                        });
+                    }
+
+                },
+                error: function () {
+                    var notice = new PNotify({
+                        title: 'Error',
+                        text: '서버에 상품 정보를 받아 오는 과정에서 에러가 발생했습니다.',
+                        type: 'error',
+                        addclass: 'click-2-close',
+                        hide: false,
+                    });
+
+                    notice.get().click(function () {
+                        notice.remove();
+                    });
+                }
+            });
+
+        });
+
+
+        function addRow(product_info) {
+
+            const table = $("#sales-table-body");
+
+            // 기존 판매 목록에 존재하는 상품인지 체크
+            const row_with_same_code = table.find("tr")
+                .filter((_, dom) =>
+                    parseInt(dom.querySelector(".product-id").textContent) === product_info.productId);
+
+
+            if (row_with_same_code.length !== 0) {
+                // 기존 판매 목록에 있던 상품인 경우
+                // 수량에 +1해주고 sub-total, discount 갱신
+                const quantity_dom = row_with_same_code.find(".quantity");
+                const new_quantity = parseInt(quantity_dom.text()) + 1;
+
+                quantity_dom.text(new_quantity);
+                row_with_same_code.find(".sub-total").text(product_info.price * new_quantity);
+                row_with_same_code.find(".discount").text(
+                    (product_info.discount !== 0 ? product_info.discount * new_quantity : '')
+                );
+
+            } else {
+                // 기존 판매 목록에 없던 새로운 상품인 경우
+
+                // 마지막 No 가져오기
+                const last_no_text = table.find("tbody tr:last-child td:first-child").text();
+                const last_no = (last_no_text === "" ? 1 : parseInt(last_no_text) + 1);
+
+                const row = $('<tr>')
+                    .append(`<td>${last_no}</td>`)
+                    .append(`<td class="product-name">${product_info.name}</td>`)
+                    .append('<td>' + product_info.price + '</td>')
+                    .append('<td class="quantity">' + 1 + '</td>')
+                    .append('<td class="sub-total">' + product_info.price + '</td>')
+                    .append('<td class="discount">' + (product_info.discount !== 0 ? product_info.discount : '') + '</td>')
+                    .append('<td class="product-id">' + product_info.productId + '</td>');
+
+                // cancel 버튼 달기. 손으로 터치하면 영역이 큰게 좋을 것 같아서 td에 달았다.
+                const cancel_btn = $('<td><i class="fa fa-times text-danger m-none" style="cursor: pointer;"></i></td>')
+                    .on("click", function () {
+                        removeRow(row);
+                    });
+                row.append(cancel_btn);
+
+                // table에 row 추가
+                table.children("tbody").append(row);
+
+                // 스크롤 맨 아래로
+                table.parent().scrollTop(table[0].scrollHeight);
+            }
+
+            updateTotal();
+        }
+
+        function removeRow(row) {
+            row.remove();
+            updateTotal();
+        }
+
+        function updateEventInfoSection() {
+
+        }
+
+        function updateTotal() {
+            const table_body = $("#sales-table-body");
+            var calcSum = function (selector) {
+                // 함수형!
+                return table_body.find(selector)
+                    .map((_, dom) => dom.textContent === "" ? 0 : parseInt(dom.textContent))
+                    .toArray()
+                    .reduce((acc, val) => acc + val, 0);
+            };
+
+
+            const total_total = calcSum(".sub-total");
+            const total_discount = calcSum('.discount');
+            $(".total-quantity").text(calcSum(".quantity"));
+            $(".total-total").text(total_total);
+            $(".total-discount").text(total_discount);
+            $(".total-payment").text(total_total - total_discount);
+            $(".amount-remained").text(total_total - total_discount);
+        }
+
+
+
+        $(".clear-btn").on("click", () => clearCntSales());
+        // 결제 완료 시 또는 판매 대기 상태에서 취소하고 싶을 때 clear
+        function clearCntSales() {
+            $(".payment-method-btn").prop("disabled", false);
+            $("#bill-list").empty();
+            $("#sales-table-body > tbody").empty();
+            $("#amount-to-pay").val("");
+            $("#card-number").val("");
+            $(".amount-paid").text("0");
+            updateTotal();
+
+            // 마일리지
+            $('#customer-phone').prop('disabled', false).val("");
+            $('.mileage-btn').prop('disabled', false);
+            $(".customer-name").text("-")
+                .removeData("customer-id");
+            $(".mileage-amount").text(0);
+        }
+
+        /**
+         * 통합 결제 관련
+         */
+        $(".payment-method-btn").on("click", (e) => validateAndAppendBill(e));
+
+        function applyValidation(dom) {
+            if (!dom.checkValidity()) {
+                dom.classList.add("invalid");
+                return false;
+            } else {
+                dom.classList.remove("invalid");
+                return true;
+            }
+        }
+
+        function validateAndAppendBill(e) {
+
+            const amount_to_pay = document.querySelector("#amount-to-pay");
+            const card_number = document.querySelector("#card-number");
+            const payment_method = e.target;
+            const amount_paid = $(".amount-paid");
+            const amount_remained = $(".amount-remained");
+
+            let validity = false;
+            if (payment_method.value === "CARD") {
+                validity = applyValidation(amount_to_pay);
+                validity = applyValidation(card_number) && validity;    // to avoid short-circuit evaluation
+            } else if (payment_method.value === "CASH") {
+                card_number.classList.remove("invalid");
+                validity = applyValidation(amount_to_pay);
+            } else {
+                console.log("unknown payment_method");
+                validity = false;
+            }
+
+            if (validity === false) return;
+
+            amount_to_pay.value = (parseInt(amount_to_pay.value) > parseInt(amount_remained.text())) ?
+                parseInt(amount_remained.text()) : parseInt(amount_to_pay.value);
+
+            if (amount_to_pay.value <= 0) return;
+
+
+            $("#bill-list").append(
+                `<h5 class="c-grey-900"><small data-value="${payment_method.value}">${payment_method.textContent}</small><span class="pull-right">${amount_to_pay.value}</span></h5>`
+            );
+
+            amount_paid.text(parseInt(amount_paid.text()) + parseInt(amount_to_pay.value));
+            amount_remained.text(parseInt(amount_remained.text()) - parseInt(amount_to_pay.value));
+
+            // 완납 시.
+            if (parseInt(amount_remained.text()) === 0) {
+                processFullPayment();
+            }
+        }
+
+        // 완납 시 트리거.
+        function processFullPayment() {
+            $(".payment-method-btn").prop("disabled", true);
+
+            const customerId = $(".customer-name").data("customer-id");
+            const sales = {
+                "customerId": (customerId !== undefined) ? customerId : null,
+                "amount": $(".total-payment").text()
+            };
+
+            const mileageInfo = {
+                "customerId": (customerId !== undefined) ? customerId : null,
+                "earned-mileage" : $(".mileage-amount").text()
+            };
+
+            const sales_products = [];
+            $("#sales-table-body").find("tr").each(function (idx, dom) {
+                sales_products.push({
+                    "productId": $(dom).find(".product-id").text(),
+                    "quantity": $(dom).find(".quantity").text()
+                });
+            });
+
+
+            const payments = [];
+            $("#bill-list").find("h5").each(function (idx, dom) {
+                payments.push({
+                    "paymentCode": $(dom).find("small").data("value"),
+                    "amount": $(dom).find("span").text()
+                })
+            });
+
+            $.ajax({
+                url: "/sales",
+                type: "POST",
+                data: JSON.stringify({
+                    "paymentList": payments,
+                    "sales": sales,
+                    "salesProductList": sales_products,
+                    // "mileageInfo": mileageInfo
+                }),
+                contentType: 'application/json;charset=UTF-8',
+                success: function (str) {
+                    console.log(str);
+                    var notice = new PNotify({
+                        title: "거래 완료",
+                        text: '거래가 정상적으로 완료되었습니다.',
+                        type: "success",
+                    });
+
+                    notice.get().click(function () {
+                        notice.remove();
+                    });
+
+                    setTimeout(function () {
+                        // 모달 종료
+                        $('.close').click();
+                        // 판매 내역 초기화
+                        clearCntSales();
+                    }, 1000);
+
+                },
+                error: function () {
+                    var notice = new PNotify({
+                        title: 'Error',
+                        text: '서버에 거래 내역을 전송하는 과정에서 에러가 발생했습니다.',
+                        type: 'error',
+                        addclass: 'click-2-close',
+                        hide: false,
+                    });
+
+                    notice.get().click(function () {
+                        notice.remove();
+                    });
+                }
+            });
+        }
+
+        /**
+         * 마일리지 (멤버쉽) 적립 관련
+         * DOM 및 value에 mileage 정보를 설정.
+         * 마일리지만 적립하고 튀는 경우를 방지하기 위해 일단 유효한 유저인지만 체크하고 클라이언트 측에 저장해두었다가
+         * 추후 결제 요청 시 마일리지 적립 정보도 함께 전송되어 처리한다.
+         */
+        $(".mileage-btn").on("click", () => setMileageInfo());
+        function setMileageInfo() {
+            const customerPhoneDom = document.querySelector("#customer-phone");
+            if (!applyValidation(customerPhoneDom)) {
+                return;
+            }
+
+            // 해당 phone 번호에 해당하는 유저가 있는지 확인하고 있다면 customerId와 Name을 들고와 setting해놓는다.
+            $.ajax({
+                url: `/customer/${customerPhoneDom.value}`,
+                type: "GET",
+                contentType: 'application/json;charset=UTF-8',
+                success: function (customerInfo) {
+                    if (customerInfo !== "") {
+                        $('#customer-phone').prop('disabled', true);
+                        $('.mileage-btn').prop('disabled', true);
+                        $(".customer-name").text(customerInfo.cusName)
+                            .data("customer-id", customerInfo.customerId);
+                        $(".mileage-amount").text(parseInt(parseInt($(".total-payment").text()) / 100 ));
+                    } else {
+                        var notice = new PNotify({
+                            title: '회원 정보가 없습니다.',
+                            text: `전화번호가 ${customerPhoneDom.value} 에 해당하는 회원이 없습니다.`,
+                            type: 'notice',
+                            addclass: 'click-2-close'
+                        });
+
+                        notice.get().click(function () {
+                            notice.remove();
+                        });
+                    }
+
+                },
+                error: function () {
+                    var notice = new PNotify({
+                        title: 'Error',
+                        text: '서버에서 고객 정보를 받아 오는 과정에서 에러가 발생했습니다.',
+                        type: 'error',
+                        addclass: 'click-2-close',
+                        hide: false,
+                    });
+
+                    notice.get().click(function () {
+                        notice.remove();
+                    });
+                }
+            });
+        }
+
+    });
+
+</script>
+</body>
+</html>
