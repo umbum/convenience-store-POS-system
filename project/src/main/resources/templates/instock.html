@@ -99,6 +99,7 @@
                                                 <th></th>
                                                 <th></th>
                                                 <th>No</th>
+                                                <th>상품번호</th>
                                                 <th>입고날짜</th>
                                                 <th>발주날짜</th>
                                                 <th>물품명</th>
@@ -113,6 +114,7 @@
                                             </tbody>
                                             <tfoot>
                                             <tr>
+                                                <th></th>
                                                 <th></th>
                                                 <th></th>
                                                 <th></th>
@@ -216,34 +218,42 @@
                 },
                 {
                     "targets": 3,
+                    "data": "productId",
+                    className: 'product-id',
+                    "orderable": false,
+                    "visible": false,
+                    "searchable": false
+                },
+                {
+                    "targets": 4,
                     "data": "receiveDate",
                     "width": "40px",
                     className: 'text-center',
                     "searchable": false
                 },
                 {
-                    "targets": 4,
+                    "targets": 5,
                     "data": "orderDate",
                     "width": "40px",
                     className: 'text-center',
                     "searchable": false
                 },
                 {
-                    "targets": 5,
+                    "targets": 6,
                     "data": "productName",
                     "width": "100px",
                     "orderable": false,
                     className: 'text-center'
                 },
                 {
-                    "targets": 6,
+                    "targets": 7,
                     "data": "companyName",
                     "width": "100px",
                     "orderable": false,
                     className: 'text-center'
                 },
                 {
-                    "targets": 7,
+                    "targets": 8,
                     "data": "receiveQuantity",
                     "width": "20px",
                     "orderable": false,
@@ -251,7 +261,7 @@
                     className: 'text-center receive-quantity'
                 },
                 {
-                    "targets": 8,
+                    "targets": 9,
                     "data": "orderQuantity",
                     "width": "20px",
                     "orderable": false,
@@ -259,7 +269,7 @@
                     className: 'text-center order-quantity'
                 },
                 {
-                    "targets": 9,
+                    "targets": 10,
                     "data": "diffQuantity",
                     "width": "20px",
                     "orderable": false,
@@ -338,9 +348,7 @@
                 contentType: 'application/json;charset=UTF-8',
                 success: function (product_info) {
                     if (product_info !== "") {
-
                         addDataTableRow(product_info);
-                        // updateEventInfoSection(product_info);
                         barcode_dom.val("");
                     } else {
                         var notice = new PNotify({
@@ -360,7 +368,7 @@
                 error: function () {
                     var notice = new PNotify({
                         title: 'Error',
-                        text: '서버에 폐기 내역을 받아 오는 과정에서 에러가 발생했습니다.',
+                        text: '서버에서 상품 내역을 받아 오는 과정에서 에러가 발생했습니다.',
                         type: 'error',
                         addclass: 'click-2-close',
                         hide: false,
@@ -384,15 +392,9 @@
 
             if (rowIdx.length !== 0) {
                 // 기존 테이블에 존재하던 상품이면 quantity만 증가
-                const quantity_cell = table.cell(rowIdx, ".quantity");
-                quantity_cell.data(quantity_cell.data() + 1).draw();
-                $(quantity_cell.node()).css("color", "red");
-                if (table.cell(rowIdx, ".status").data() === "normal") {
-                    table.cell(rowIdx, ".status").data("update");
-                }
+                // 여기서 diff-quantity도 같이 갱신해줘야함. 굳이 필요 없는 기능이라 뺐다.
             } else {
                 // 기존 테이블에 없던 상품이면 추가.
-
                 const lastRow = table.row(":last").data();
                 const newRow = table.row.add({
                     "hiddenOrder": (lastRow) ? lastRow.hiddenOrder + 1 : 1,
@@ -401,7 +403,12 @@
                     "productId": product_info.productId,
                     "productName": product_info.name,
                     "quantity": 1,
-                    "date": $("#date-picker").val().split("/").join("")
+                    "receiveDate": $("#date-picker").val().split("/").join("-"),
+                    "orderDate": "-",
+                    "companyName" : product_info.companyName,
+                    "receiveQuantity": 0,
+                    "orderQuantity" : 0,
+                    "diffQuantity" : 0
                 }).draw().node();
                 $(newRow).css("color", "red");
             }

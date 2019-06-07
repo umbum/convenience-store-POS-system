@@ -23,7 +23,7 @@ public class ProductRepoImpl implements ProductRepo {
 
     @Override
     public Product read(long productId) {
-        String query = "SELECT PRODUCT_ID, BARCODE, PRICE, NAME, CSPS, FRS, ORD_PRI AS ORDER_PRICE FROM PRODUCT WHERE PRODUCT_ID = ?";
+        String query = "SELECT PRODUCT_ID, BARCODE, PRICE, NAME, CSPS, FRS, ORD_PRI AS ORDER_PRICE, C.COM_NAME AS COMPANY_NAME FROM PRODUCT P, COMPANY C WHERE P.PRODUCT_ID = C.COMPANY_ID AND P.PRODUCT_ID = ?";
 
         Product product = null;
         try {
