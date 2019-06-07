@@ -139,7 +139,7 @@
         /**
          *  DataTable init
          */
-        var $table = $('#datatable');
+        const $table = $('#datatable');
         const pageLength = 5;
         const $datatable = $table.DataTable({
             "ajax": {
@@ -183,7 +183,7 @@
                 },
                 {
                     "targets": 6,
-                    "data": "date",
+                    "data": "disDate",
                     "width": "150px",
                     "orderable": false,
                     "searchable" : false,
@@ -290,13 +290,11 @@
                     "productId" : product_info.productId,
                     "productName" : product_info.name,
                     "quantity" : 1,
-                    "date" : $("#date-picker").val().split("/").join("")
+                    "disDate" : $("#date-picker").val().split("/").join("")
                 }).draw().node();
                 $(newRow).css("color", "red");
             }
-
         }
-
 
         /**
          * 저장 버튼 event ajax post
@@ -306,13 +304,20 @@
         });
 
         function sendDisposalHistoryToServer(e) {
+            const rowList = $datatable.data();
+            const disposalProducts = [];
+            for (let i = 0; i < rowList.length; i++) {
+                disposalProducts.push(rowList[i]);
+            }
+            const updatedDisposalProducts = disposalProducts.filter((d) => d.status === "update");
+            const createdDisposalProducts = disposalProducts.filter((d) => d.status === "create");
+
             $.ajax({
                 url: "/disposal-history/" + $datepicker.val().split("/").join(""),
                 type: "POST",
                 data: JSON.stringify({
-                    "paymentList": 1,
-                    "sales": 1,
-                    "salesProductList": 1
+                    "update": updatedDisposalProducts,
+                    "create": createdDisposalProducts
                 }),
                 contentType: 'application/json;charset=UTF-8',
                 success: function (str) {
@@ -322,11 +327,6 @@
                         title: "SUCCESS",
                         text: '저장 완료',
                         type: "success",
-                        // addclass: 'click-2-close',
-                        // buttons: {
-                        //     closer: false,
-                        //     sticker: false
-                        // }
                     });
 
                     notice.get().click(function () {
