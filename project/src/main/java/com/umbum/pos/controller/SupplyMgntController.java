@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umbum.pos.model.DisposalProduct;
+import com.umbum.pos.model.ProductInstockHistory;
 import com.umbum.pos.service.SupplyMgntService;
 
 @Controller
@@ -31,17 +31,16 @@ public class SupplyMgntController {
         return "disposal.html";
     }
 
-    @GetMapping("/disposal-history/{date}")
     @ResponseBody
+    @GetMapping("/disposal-history/{date}")
     public List<DisposalProduct> getDisposalProducts(@PathVariable String date) {
         if (date.equals("0"))
             return new ArrayList<>();
-
         return supplyMgntService.getDisposalProducts(date);
     }
 
-    @PostMapping("/disposal-history/{date}")
     @ResponseBody
+    @PostMapping("/disposal-history/{date}")
     public String postDisposalHistories(@PathVariable String date,
         @RequestBody Map<String, List<DisposalProduct>> disposalHistoryChanges) {
 //        System.out.println(disposalHistoryChanges.get("update"));
@@ -55,7 +54,19 @@ public class SupplyMgntController {
      * 입고(재고) / 오출 등록 및 조회
      */
     @GetMapping("/instock")
-    public String inStock() {
+    public String instock() {
+        return "instock.html";
+    }
+
+    @ResponseBody
+    @GetMapping("/instock/{date}")
+    public List<ProductInstockHistory> getInstock(@PathVariable String date) {
+        return supplyMgntService.getInstockHistories(date);
+    }
+
+    @ResponseBody
+    @PostMapping("/instock/{date}")
+    public String postInstock() {
         return "instock.html";
     }
 }
