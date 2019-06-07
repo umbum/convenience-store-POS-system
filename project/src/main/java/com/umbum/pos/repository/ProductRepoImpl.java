@@ -22,12 +22,12 @@ public class ProductRepoImpl implements ProductRepo {
 
 
     @Override
-    public Product read(long productCode) {
-        String query = "SELECT PRODUCT_ID, BARCODE, PRICE, NAME, 0 AS DISCOUNT FROM PRODUCT WHERE PRODUCT_ID = ?";
+    public Product read(long productId) {
+        String query = "SELECT PRODUCT_ID, BARCODE, PRICE, NAME, CSPS, FRS, ORD_PRI AS ORDER_PRICE FROM PRODUCT WHERE PRODUCT_ID = ?";
 
         Product product = null;
         try {
-            product = jdbcTemplate.queryForObject(query, new Object[]{productCode}, new BeanPropertyRowMapper<>(Product.class));
+            product = jdbcTemplate.queryForObject(query, new Object[]{productId}, new BeanPropertyRowMapper<>(Product.class));
         } catch (EmptyResultDataAccessException e) {
             log.debug("Incorrect result size: expected 1, actual 0");
         }

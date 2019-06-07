@@ -75,7 +75,7 @@
                                                 <div class="p-30 bgc-grey-200 layer w-100 text-center">
                                                     <p></p>
                                                     <i class="ti-gift pR-10" style="font-size:30px"></i>
-                                                    <p>행사 상품 정보</p>
+                                                    <p id="event-text">행사 상품 정보</p>
                                                 </div>
                                             </div>
                                             <div class="layer w-100 mT-15">
@@ -208,8 +208,8 @@
                                                                                id="customer-phone"
                                                                                placeholder="01012349876"
                                                                                required
-                                                                               pattern="[0-9]{9,11}"
                                                                                title="고객 전화번호를 입력해주세요.">
+<!--                                                                               pattern="[0-9]{9,11}"-->
                                                                     </div>
                                                                     <div class="pT-10">
                                                                         <button type="button"
@@ -290,13 +290,15 @@
             // product_info를 ajax request
             const barcode_dom = $('#barcode');
             $.ajax({
-                url: `/product/${barcode_dom.val()}`,
+                url: `/product-with-events/${barcode_dom.val()}`,
                 type: "GET",
                 contentType: 'application/json;charset=UTF-8',
-                success: function (product_info) {
-                    if (product_info !== "") {
-                        addRow(product_info);
-                        updateEventInfoSection(product_info);
+                success: function (productWithEvents) {
+                    const product = productWithEvents.product;
+                    const events = productWithEvents.events;
+                    if (product !== null) {
+                        const discountRate = updateEventInfoSection(events);
+                        addRow(product, discountRate);
                         barcode_dom.val("");
                     } else {
                         var notice = new PNotify({
@@ -330,15 +332,14 @@
         });
 
 
-        function addRow(product_info) {
-
+        function addRow(product, discountRate) {
+            const discountAmount = parseInt((discountRate / 100) * product.price);
             const table = $("#sales-table-body");
 
             // 기존 판매 목록에 존재하는 상품인지 체크
             const row_with_same_code = table.find("tr")
                 .filter((_, dom) =>
-                    parseInt(dom.querySelector(".product-id").textContent) === product_info.productId);
-
+                    parseInt(dom.querySelector(".product-id").textContent) === product.productId);
 
             if (row_with_same_code.length !== 0) {
                 // 기존 판매 목록에 있던 상품인 경우
@@ -347,9 +348,9 @@
                 const new_quantity = parseInt(quantity_dom.text()) + 1;
 
                 quantity_dom.text(new_quantity);
-                row_with_same_code.find(".sub-total").text(product_info.price * new_quantity);
+                row_with_same_code.find(".sub-total").text(product.price * new_quantity);
                 row_with_same_code.find(".discount").text(
-                    (product_info.discount !== 0 ? product_info.discount * new_quantity : '')
+                    (discountAmount !== 0 ? discountAmount * new_quantity : '')
                 );
 
             } else {
@@ -361,12 +362,12 @@
 
                 const row = $('<tr>')
                     .append(`<td>${last_no}</td>`)
-                    .append(`<td class="product-name">${product_info.name}</td>`)
-                    .append('<td>' + product_info.price + '</td>')
+                    .append(`<td class="product-name">${product.name}</td>`)
+                    .append('<td>' + product.price + '</td>')
                     .append('<td class="quantity">' + 1 + '</td>')
-                    .append('<td class="sub-total">' + product_info.price + '</td>')
-                    .append('<td class="discount">' + (product_info.discount !== 0 ? product_info.discount : '') + '</td>')
-                    .append('<td class="product-id">' + product_info.productId + '</td>');
+                    .append('<td class="sub-total">' + product.price + '</td>')
+                    .append('<td class="discount">' + (discountAmount !== 0 ? discountAmount : '') + '</td>')
+                    .append('<td class="product-id">' + product.productId + '</td>');
 
                 // cancel 버튼 달기. 손으로 터치하면 영역이 큰게 좋을 것 같아서 td에 달았다.
                 const cancel_btn = $('<td><i class="fa fa-times text-danger m-none" style="cursor: pointer;"></i></td>')
@@ -390,8 +391,15 @@
             updateTotal();
         }
 
-        function updateEventInfoSection() {
+        function updateEventInfoSection(events) {
+            const $eventText = $("#event-text");
+            if (events.length === 0) {
+                $eventText.text("행사 상품 정보").css("color", "grey");
+                return 0;
+            }
 
+            $eventText.text(events[0].eventName).css("color", "red");
+            return events.reduce((a, e) => a + e.discountRate, 0);
         }
 
         function updateTotal() {
@@ -530,7 +538,7 @@
                     "paymentList": payments,
                     "sales": sales,
                     "salesProductList": sales_products,
-                    // "mileageInfo": mileageInfo
+                    "mileageInfo": mileageInfo
                 }),
                 contentType: 'application/json;charset=UTF-8',
                 success: function (str) {
@@ -606,7 +614,6 @@
                             notice.remove();
                         });
                     }
-
                 },
                 error: function () {
                     var notice = new PNotify({
