@@ -9,7 +9,7 @@ public class Product {
     private int price;
     private String name;
     private String barcode;
-//    private String CSPS;    // 편의점 전용상품?
-//    private String FRS;     // 뭐라그랬더라?
+//    private String CSPS;    // 편의점 전용상품 여부
+//    private String FRS;     // 파손 위험 상품 여부
     private int orderPrice;
 }

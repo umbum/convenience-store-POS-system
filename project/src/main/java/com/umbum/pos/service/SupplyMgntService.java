@@ -31,16 +31,17 @@ public class SupplyMgntService {
     /**
      *
      * @param date
-     *  지금은 폐기 검색이 하루 단위라 필요 없을지 몰라도, 추후 범위 검색 등에 필요할 수 있다.
-     * @param disposalHistoryChanges
+     *      지금은 폐기 검색이 하루 단위라 필요 없을지 몰라도, 추후 범위 검색 등에 필요할 수 있다.
+     * @param updateList
+     * @param createList
      * @return
      */
-    public int[] applyDisposalProductsChange(String date, Map<String, List<DisposalProduct>> disposalHistoryChanges) {
+    public int[] applyDisposalProductsChange(String date, List<DisposalProduct> createList, List<DisposalProduct> updateList) {
 
-        if (disposalHistoryChanges.get("create").size() != 0)
-            disposalProductRepo.createAll(date, disposalHistoryChanges.get("create"));
-        if (disposalHistoryChanges.get("update").size() != 0)
-            disposalProductRepo.updateAll(date, disposalHistoryChanges.get("update"));
+        if (createList != null && createList.size() != 0)
+            disposalProductRepo.createAll(date, createList);
+        if (updateList != null && updateList.size() != 0)
+            disposalProductRepo.updateAll(date, updateList);
 
         return new int[0];
     }
@@ -51,5 +52,10 @@ public class SupplyMgntService {
      */
     public List<ProductInstockHistory> getInstockHistories(String date) {
         return productInstockHistoryRepo.readAll(date);
+    }
+
+    public int[] processProductInstockHistories(List<ProductInstockHistory> histories) {
+
+        return null;
     }
 }
