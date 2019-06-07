@@ -45,7 +45,7 @@
 
                                             <div class="col-sm-6">
                                                 <button type="button"
-                                                        class="btn cur-p btn-info pull-right disposal-history-search-btn">
+                                                        class="btn cur-p btn-info pull-right history-search-btn">
                                                     <i
                                                             class="fa fa-search">&nbsp;&nbsp;조회</i>
                                                 </button>
@@ -99,7 +99,7 @@
                                     </div>
                                     <div class="layer w-100 mB-10 text-center">
                                         <button type="button"
-                                                class="btn cur-p btn-lg btn-dark w-25" id="disposal-history-save-btn">저장
+                                                class="btn cur-p btn-lg btn-dark w-25" id="history-save-btn">저장
                                         </button>
                                     </div>
                                 </div>
@@ -206,7 +206,7 @@
         /**
          * 조회 버튼에 ajax click event로 disposal-history 가져오기
          */
-        $(".disposal-history-search-btn").on("click", function (e) {
+        $(".history-search-btn").on("click", function (e) {
             const selectedDate = $datepicker.val().split("/").join("");
             $datatable.ajax.url('/disposal-history/' + selectedDate).load();
         });
@@ -299,7 +299,7 @@
         /**
          * 저장 버튼 event ajax post
          */
-        $("#disposal-history-save-btn").on("click", function (e) {
+        $("#history-save-btn").on("click", function (e) {
             sendDisposalHistoryToServer(e);
         });
 
