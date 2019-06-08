@@ -42,7 +42,6 @@ public class IndexController {
 
     @ResponseBody
     @PostMapping("/join")
-//    public String postJoin() {
     public String postJoin(@RequestBody Map<String, String> accountInfo) {
         // RequestBody를 못쓴다. Authorities 때문에... 그래서 그냥 메뉴얼하게 처리해주자.
         HashSet<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
