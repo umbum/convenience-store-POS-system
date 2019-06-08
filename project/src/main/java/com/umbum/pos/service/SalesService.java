@@ -32,8 +32,8 @@ public class SalesService {
     }
 
     @Transactional
-    public String saveSalesInfo(SalesInfo salesInfo, Account account) {
-        salesInfo.getSales().setBranchId(account.getBranchId());
+    public String saveSalesInfo(SalesInfo salesInfo, long branchId) {
+        salesInfo.getSales().setBranchId(branchId);
         long salesId = salesRepo.create(salesInfo.getSales());
 
         salesInfo.getSalesProductList().forEach(salesProduct -> {

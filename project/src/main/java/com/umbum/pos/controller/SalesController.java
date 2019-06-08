@@ -37,6 +37,6 @@ public class SalesController {
             return "FAIL";
         }
 
-        return salesService.saveSalesInfo(salesInfo, account);
+        return salesService.saveSalesInfo(salesInfo, account.getBranchId());
     }
 }
