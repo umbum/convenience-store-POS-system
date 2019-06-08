@@ -54,8 +54,10 @@ public class SupplyMgntService {
         return productInstockHistoryRepo.readAll(date);
     }
 
-    public int[] processProductInstockHistories(List<ProductInstockHistory> histories) {
-
+    public int[] processProductInstockHistories(List<ProductInstockHistory> histories, long branchId) {
+        if (histories != null && histories.size() != 0) {
+            productInstockHistoryRepo.createAll(histories, branchId);
+        }
         return null;
     }
 }

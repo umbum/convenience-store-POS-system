@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.umbum.pos.model.Account;
 import com.umbum.pos.model.DisposalProduct;
 import com.umbum.pos.model.ProductInstockHistory;
 import com.umbum.pos.service.OrderService;
@@ -71,7 +73,9 @@ public class SupplyMgntController {
     @ResponseBody
     @PostMapping("/instock-history/{date}")
     public int[] postInstockHistories(@PathVariable String date,
-        @RequestBody List<ProductInstockHistory> productInstockHistories) {
-        return supplyMgntService.processProductInstockHistories(productInstockHistories);
+        @RequestBody List<ProductInstockHistory> productInstockHistories,
+        @AuthenticationPrincipal Account account) {
+
+        return supplyMgntService.processProductInstockHistories(productInstockHistories, account.getBranchId());
     }
 }

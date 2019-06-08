@@ -6,5 +6,5 @@ import com.umbum.pos.model.ProductInstockHistory;
 
 public interface ProductInstockHistoryRepo {
     public List<ProductInstockHistory> readAll(String date);
-    public int create(ProductInstockHistory account);
+    public int createAll(List<ProductInstockHistory> productInstockHistories, long branchId);
 }

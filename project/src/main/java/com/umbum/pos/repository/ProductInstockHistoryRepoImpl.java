@@ -1,13 +1,17 @@
 package com.umbum.pos.repository;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.umbum.pos.model.ProductInstockHistory;
 
@@ -43,48 +47,85 @@ public class ProductInstockHistoryRepoImpl implements ProductInstockHistoryRepo 
         }
     }
 
+    /**
+     * RECEIVE(+_PRODUCT), SEND_ERROR 대상으로 레코드 삽입, STOCK 대상으로 레코드 삽입 또는 수정(수량)
+     * @param productInstockHistories
+     * @return
+     */
+    @Transactional
     @Override
-    public int create(ProductInstockHistory account) {
-        // RECEIVE 레코드 생성
-        String query = "";
-        /**
-        RECEIVE 레코드 생성
-        INSERT INTO RECEIVE(COMPANY_ID,ORDER_ID,RCV_DATE)
-        VALUES(?,?,TRUNC(SYSDATE));
+    public int createAll(List<ProductInstockHistory> productInstockHistories, long branchId) {
 
-        입고물품에 등록하기 위해 물품 바코드 찍어서 PRODUCT_ID를 들고옴
-        SELECT PRODUCT_ID FROM PRODUCT WHERE ? = BARCODE;
+        // INSERT INTO RECEIVE
+        String insertIntoReceive = "INSERT INTO RECEIVE(COMPANY_ID,ORDER_ID,RCV_DATE)\n"
+            + "VALUES(?,?,TRUNC(SYSDATE))";
+        jdbcTemplate.update(insertIntoReceive,
+            productInstockHistories.get(0).getCompanyId(),
+            productInstockHistories.get(0).getOrderId()
+        );
 
-        RECEIVE_PRODUCT 레코드 생성
-        INSERT INTO RECEIVE_PRODUCT(COMPANY_ID, ORDER_ID, PRODUCT_ID, QUANTITY)
-        VALUES(?,?,?,?);
+        // INSERT INTO RECEIVE_PRODUCT
+        String insertIntoReceiveProduct = "INSERT INTO RECEIVE_PRODUCT(COMPANY_ID, ORDER_ID, PRODUCT_ID, QUANTITY)\n"
+            + "VALUES(?,?,?,?)";
+        jdbcTemplate.batchUpdate(insertIntoReceiveProduct, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setString(1, Long.toString(productInstockHistories.get(i).getCompanyId()));
+                ps.setString(2, Long.toString(productInstockHistories.get(i).getOrderId()));
+                ps.setString(3, Long.toString(productInstockHistories.get(i).getProductId()));
+                ps.setString(4, Integer.toString(productInstockHistories.get(i).getReceiveQuantity()));
+            }
 
-        오차=0 OR 과배송 일경우 STOCK 레코드 생성
-        MERGE INTO STOCK S
-        USING DUAL ON (S.PRODUCT_ID = ? AND S.BRANCH_ID = ?)
-        WHEN MATCHED THEN UPDATE SET S.QUANTITY = S.QUANTITY + ?(발주수량)
-        WHEN NOT MATCHED THEN
-        INSERT (S.PRODUCT_ID, S.BRANCH_ID, S.QUANTITY)
-        VALUES (?,?,?)
-
-        작게 배송일경우 STOCK 레코드
-        MERGE INTO STOCK S
-        USING DUAL ON (S.PRODUCT_ID = ? AND S.BRANCH_ID = ?)
-        WHEN MATCHED THEN UPDATE SET S.QUANTITY = S.QUANTITY + ?(입고수량)
-        WHEN NOT MATCHED THEN
-        INSERT (S.PRODUCT_ID, S.BRANCH_ID, S.QUANTITY)
-        VALUES (?,?,?)
-
-        오배송일경우 SEND_ERROR 레코드 생성
-        INSERT INTO SEND_ERROR(COMPANY_ID, ORDER_ID, SENDERR_CODE, SENDERROR_DATE)
-        VALUES(?,?,?,TRUNC(SYSDATE));
-
-        SEND_ERROR 레코드 생성후 SENDERROR_PRODUCT 레코드 생성
-        INSERT INTO SENDERROR_PRODUCT(COMPANY_ID, ORDER_ID, PRODUCT_ID, SENDERR_CODE, QUANTITY)
-        VALUES(?,?,?,?,?(차이수량));
-         */
+            @Override
+            public int getBatchSize() {
+                return productInstockHistories.size();
+            }
+        });
 
 
+
+        String insertOrUpdateIntoStock = "MERGE INTO STOCK S\n"
+            + "USING DUAL ON (S.PRODUCT_ID = ? AND S.BRANCH_ID = ?)\n"
+            + "WHEN MATCHED THEN UPDATE SET S.QUANTITY = S.QUANTITY + ?\n"
+            + "WHEN NOT MATCHED THEN\n"
+            + "INSERT (S.PRODUCT_ID, S.BRANCH_ID, S.QUANTITY)\n"
+            + "VALUES (?,?,?)";
+        jdbcTemplate.batchUpdate(insertOrUpdateIntoStock, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ProductInstockHistory p = productInstockHistories.get(i);
+
+                // 입고 = 발주 : 아무거나 STOCK에.
+                // 입고 > 발주 : 발주 수량 만큼만 STOCK에 넣고 차이 만큼 SEND_ERROR에.
+                // 입고 < 발주 : 입고 수량 만큼 STOCK에.
+                int quantity = (p.getReceiveQuantity() <= p.getOrderQuantity()) ?
+                    p.getReceiveQuantity() : p.getOrderQuantity();
+
+                ps.setString(1, Long.toString(p.getProductId()));
+                ps.setString(2, Long.toString(branchId));
+                ps.setString(3, Integer.toString(quantity));
+                ps.setString(4, Long.toString(p.getProductId()));
+                ps.setString(5, Long.toString(branchId));
+                ps.setString(6, Integer.toString(quantity));
+            }
+
+            @Override
+            public int getBatchSize() {
+                return productInstockHistories.size();
+            }
+        });
+
+        // 입고 > 발주 : 발주 수량 만큼만 STOCK에 넣고 차이 만큼 SEND_ERROR에.
+//        String insertIntoSendError = "INSERT INTO SEND_ERROR(COMPANY_ID, ORDER_ID, SENDERR_CODE, SENDERROR_DATE)\n"
+//            + "VALUES(?,?,?,TRUNC(SYSDATE))";
+//        jdbcTemplate.update(insertIntoReceive,
+//            productInstockHistories.get(0).getCompanyId(),
+//            productInstockHistories.get(0).getOrderId()
+//        );
+//
+//
+//        String insertIntoSendErrorProduct = "INSERT INTO SENDERROR_PRODUCT(COMPANY_ID, ORDER_ID, PRODUCT_ID, SENDERR_CODE, QUANTITY)\n"
+//            + "VALUES(?,?,?,?,?(차이수량));";
 
 
         return 0;

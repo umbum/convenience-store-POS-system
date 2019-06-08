@@ -309,7 +309,6 @@
             const companyId = $('#company-id').val();
             const orderId = $('#order-id').val();
             $datatable.ajax.url(`/order/${orderId}?companyId=${companyId}`).load();
-            appendReceiveQuantityInputBox();
         });
 
         // 동시에 received-quantity에 input을 달아서 입고 개수를 입력할 수 있도록 하고
@@ -332,6 +331,7 @@
                 diffQuantityCell.data(receiveQuantityCell.data() - orderQuantityCell.data()).draw();
             });
         }
+        appendReceiveQuantityInputBox();
 
 
         /**
@@ -419,18 +419,21 @@
          * 저장 버튼 event ajax post
          */
         $("#history-save-btn").on("click", function (e) {
-            sendDiscardHistoryToServer(e);
+            sendHistoryToServer(e);
         });
 
-        function sendDiscardHistoryToServer(e) {
+        function sendHistoryToServer(e) {
+            const rowList = $datatable.data();
+            const productInstockHistories = [];
+            for (let i = 0; i < rowList.length; i++) {
+                productInstockHistories.push(rowList[i]);
+            }
             $.ajax({
                 url: "/instock-history/" + $datepicker.val().split("/").join(""),
                 type: "POST",
-                data: JSON.stringify({
-                    "payments": 1,
-                    "sales": 1,
-                    "sales_products": 1
-                }),
+                data: JSON.stringify(
+                    productInstockHistories
+                ),
                 contentType: 'application/json;charset=UTF-8',
                 success: function (str) {
                     // 저장 완료 pnotify
@@ -439,11 +442,8 @@
                         title: "SUCCESS",
                         text: '저장 완료',
                         type: "success",
-                        // addclass: 'click-2-close',
-                        // buttons: {
-                        //     closer: false,
-                        //     sticker: false
-                        // }
+                        addclass: 'click-2-close',
+                        hide: false
                     });
 
                     notice.get().click(function () {
