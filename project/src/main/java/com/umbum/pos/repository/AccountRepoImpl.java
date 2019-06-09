@@ -27,7 +27,7 @@ public class AccountRepoImpl implements AccountRepo {
     @Override
     public Account read(String username) {
         // authorities 때문에 objectMapper는 못쓰고 직접 Account를 만들어야 한다.
-        String accountQuery   = "SELECT USERNAME, PASSWORD, A.BRANCH_ID, '전농동 지점' AS BRANCH_NAME FROM ACCOUNT A, BRANCH B WHERE A.BRANCH_ID = B.BRANCH_ID AND A.USERNAME = ?";
+        String accountQuery   = "SELECT USERNAME, PASSWORD, A.BRANCH_ID, B.BRANCH_NAME FROM ACCOUNT A, BRANCH B WHERE A.BRANCH_ID = B.BRANCH_ID AND A.USERNAME = ?";
         String authorityQuery = "SELECT AUTHORITY FROM AUTHORITY WHERE USERNAME = ?";
 
         Map<String, Object> accountRecord = jdbcTemplate.queryForMap(accountQuery, username);
