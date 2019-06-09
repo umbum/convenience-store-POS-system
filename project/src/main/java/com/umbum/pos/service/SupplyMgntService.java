@@ -28,20 +28,11 @@ public class SupplyMgntService {
         return disposalProductRepo.readAll(date);
     }
 
-    /**
-     *
-     * @param date
-     *      지금은 폐기 검색이 하루 단위라 필요 없을지 몰라도, 추후 범위 검색 등에 필요할 수 있다.
-     * @param updateList
-     * @param createList
-     * @return
-     */
-    public int[] applyDisposalProductsChange(String date, List<DisposalProduct> createList, List<DisposalProduct> updateList) {
-
+    public int[] applyDisposalProductsChange(List<DisposalProduct> createList, List<DisposalProduct> updateList) {
         if (createList != null && createList.size() != 0)
-            disposalProductRepo.createAll(date, createList);
+            disposalProductRepo.createAll(createList);
         if (updateList != null && updateList.size() != 0)
-            disposalProductRepo.updateAll(date, updateList);
+            disposalProductRepo.updateAll(updateList);
 
         return new int[0];
     }

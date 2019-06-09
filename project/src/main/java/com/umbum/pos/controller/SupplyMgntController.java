@@ -29,8 +29,8 @@ public class SupplyMgntController {
     /**
      * 폐기 등록 및 조회
      */
-    @GetMapping("/disposal")
-    public String disposal() {
+    @GetMapping("/disposal-page")
+    public String disposalPage() {
         return "disposal.html";
     }
 
@@ -43,12 +43,11 @@ public class SupplyMgntController {
     }
 
     @ResponseBody
-    @PostMapping("/disposal-history/{date}")
-    public String postDisposalHistories(@PathVariable String date,
-        @RequestBody Map<String, List<DisposalProduct>> disposalHistoryChanges) {
+    @PostMapping("/disposal-history")
+    public String postDisposalHistories(@RequestBody Map<String, List<DisposalProduct>> disposalHistoryChanges) {
         List<DisposalProduct> createList = disposalHistoryChanges.get("create");
         List<DisposalProduct> updateList = disposalHistoryChanges.get("update");
-        supplyMgntService.applyDisposalProductsChange(date, createList, updateList);
+        supplyMgntService.applyDisposalProductsChange(createList, updateList);
 
         return "{}";
     }
@@ -56,8 +55,8 @@ public class SupplyMgntController {
     /**
      * 입고(재고) / 오출 등록 및 조회
      */
-    @GetMapping("/instock")
-    public String instock() {
+    @GetMapping("/instock-page")
+    public String instockPage() {
         return "instock.html";
     }
 
@@ -71,9 +70,8 @@ public class SupplyMgntController {
 
 
     @ResponseBody
-    @PostMapping("/instock-history/{date}")
-    public int[] postInstockHistories(@PathVariable String date,
-        @RequestBody List<ProductInstockHistory> productInstockHistories,
+    @PostMapping("/instock-history")
+    public int[] postInstockHistories(@RequestBody List<ProductInstockHistory> productInstockHistories,
         @AuthenticationPrincipal Account account) {
 
         return supplyMgntService.processProductInstockHistories(productInstockHistories, account.getBranchId());

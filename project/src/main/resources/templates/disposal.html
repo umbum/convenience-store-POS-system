@@ -152,7 +152,6 @@
                         disposalHistories[i].status = "normal";
                         hiddenOrderNum += 1;
                     }
-                    // appendDummyRow(disposalHistories, pageLength, hiddenOrderNum)
                     return disposalHistories;
                 }
             },
@@ -227,7 +226,6 @@
                     if (product_info !== "") {
 
                         addDataTableRow(product_info);
-                        // updateEventInfoSection(product_info);
                         barcode_dom.val("");
                     } else {
                         var notice = new PNotify({
@@ -313,7 +311,7 @@
             const createdDisposalProducts = disposalProducts.filter((d) => d.status === "create");
 
             $.ajax({
-                url: "/disposal-history/" + $datepicker.val().split("/").join(""),
+                url: "/disposal-history",
                 type: "POST",
                 data: JSON.stringify({
                     "update": updatedDisposalProducts,

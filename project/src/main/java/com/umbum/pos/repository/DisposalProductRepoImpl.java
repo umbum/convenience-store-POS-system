@@ -50,14 +50,14 @@ public class DisposalProductRepoImpl implements DisposalProductRepo {
 
     @Transactional
     @Override
-    public int[] createAll(String date, List<DisposalProduct> disposalProducts) {
+    public int[] createAll(List<DisposalProduct> disposalProducts) {
         /*
          * "저장" 버튼을 누르는 것을 하나의 폐기 묶음 단위로 본다.
          */
         Date dateDate = null;
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-            dateDate = dateFormat.parse(date);
+            dateDate = dateFormat.parse(disposalProducts.get(0).getDisDate());
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
@@ -92,7 +92,7 @@ public class DisposalProductRepoImpl implements DisposalProductRepo {
     }
 
     @Override
-    public int[] updateAll(String date, List<DisposalProduct> disposalProducts) {
+    public int[] updateAll(List<DisposalProduct> disposalProducts) {
         // 폐기 상품에 대한 수량 변경(update)는 지금은 고려하지 않는다.
         return new int[0];
     }

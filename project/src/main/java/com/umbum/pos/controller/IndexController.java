@@ -33,12 +33,12 @@ public class IndexController {
     }
 
     @GetMapping("/login")
-    public String login() {
+    public String loginPage() {
         return "signin";
     }
 
     @GetMapping("/join")
-    public String join() { return "/error/404";}
+    public String joinPage() { return "/error/404";}
 
     @ResponseBody
     @PostMapping("/join")

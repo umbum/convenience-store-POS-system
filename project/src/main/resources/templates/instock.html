@@ -308,7 +308,7 @@
             e.preventDefault();
             const companyId = $('#company-id').val();
             const orderId = $('#order-id').val();
-            $datatable.ajax.url(`/order/${orderId}?companyId=${companyId}`).load();
+            $datatable.ajax.url(`/order/${orderId}/company/${companyId}`).load();
         });
 
         // 동시에 received-quantity에 input을 달아서 입고 개수를 입력할 수 있도록 하고
@@ -429,7 +429,7 @@
                 productInstockHistories.push(rowList[i]);
             }
             $.ajax({
-                url: "/instock-history/" + $datepicker.val().split("/").join(""),
+                url: "/instock-history",
                 type: "POST",
                 data: JSON.stringify(
                     productInstockHistories

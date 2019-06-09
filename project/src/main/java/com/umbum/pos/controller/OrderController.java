@@ -20,23 +20,24 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @GetMapping("/order")
-    public String order() {
+    @GetMapping("/order-page")
+    public String orderPage() {
         return "order.html";
     }
 
     @ResponseBody
     @GetMapping("/order/{orderId}")
-    public List<OrderProduct> getOrderProducts(@PathVariable long orderId,
-        @RequestParam(required = false) Long companyId) {
+    public List<OrderProduct> getOrderProducts(@PathVariable long orderId) {
         if (orderId == 0)
             return new ArrayList<>();
-
-        if (companyId != null) {
-            return orderService.getOrderProductsFromCompany(orderId, companyId);
-        }
-
-        // 여기는 그냥 orderId로 검색하는거지뭐?? 아님 기간이나..
+        // 여기는 그냥 orderId로 검색하는거지.
         return new ArrayList<>();
+    }
+
+    @ResponseBody
+    @GetMapping("/order/{orderId}/company/{companyId}")
+    public List<OrderProduct> getOrderProducts(@PathVariable long orderId,
+        @PathVariable long companyId) {
+        return orderService.getOrderProductsFromCompany(orderId, companyId);
     }
 }
