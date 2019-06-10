@@ -45,10 +45,15 @@ public class SupplyMgntService {
         return productInstockHistoryRepo.readAll(date);
     }
 
+    public List<ProductInstockHistory> getOrderProductsOfCompany(long orderId, long companyId) {
+        return productInstockHistoryRepo.readAll(orderId, companyId);
+    }
+
     public int[] processProductInstockHistories(List<ProductInstockHistory> histories, long branchId) {
         if (histories != null && histories.size() != 0) {
             productInstockHistoryRepo.createAll(histories, branchId);
         }
         return null;
     }
+
 }

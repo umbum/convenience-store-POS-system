@@ -15,14 +15,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.umbum.pos.model.Account;
 import com.umbum.pos.model.DisposalProduct;
 import com.umbum.pos.model.ProductInstockHistory;
-import com.umbum.pos.service.OrderService;
 import com.umbum.pos.service.SupplyMgntService;
 
 @Controller
 public class SupplyMgntController {
     private final SupplyMgntService supplyMgntService;
 
-    public SupplyMgntController(SupplyMgntService supplyMgntService, OrderService orderService) {
+    public SupplyMgntController(SupplyMgntService supplyMgntService) {
         this.supplyMgntService = supplyMgntService;
     }
 
@@ -68,12 +67,10 @@ public class SupplyMgntController {
         return supplyMgntService.getInstockHistories(date);
     }
 
-
     @ResponseBody
     @PostMapping("/instock-history")
     public int[] postInstockHistories(@RequestBody List<ProductInstockHistory> productInstockHistories,
         @AuthenticationPrincipal Account account) {
-
         return supplyMgntService.processProductInstockHistories(productInstockHistories, account.getBranchId());
     }
 }

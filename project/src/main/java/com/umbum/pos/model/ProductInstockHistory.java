@@ -2,24 +2,25 @@ package com.umbum.pos.model;
 
 import lombok.Data;
 
+/**
+ * 이렇게 되면 전혀 RESTful 하지 않음. 클라이언트의 datatable에서 표현해야 하는 column대로 Model을 만들면, 클라이언트가 어떤 어떤 데이터를 출력하는가에 엄청나게 의존하게됨.
+ * Order에서 receive에 대한 정보도 한꺼번에 가져오기 때문에 굳이 ProductInstockHistory와 그에 대한 Repository가 있을 필요가 없다.
+ * 나중에 리팩토링할 것.
+ */
 @Data
 public class ProductInstockHistory {
-    /**
-     * 물품이 입고될 때, 발주 내역서가 물품과 함께 들어오며 연관된 ORDER_ID가 내역서에 적혀있다.
-     * 그래서 입고 시점에서 물건을 추가할 때 내역서에 있는 ORDER_ID를 보고 바코드를 찍으면 입력되는 식이므로
-     * 프론트엔드에서 ORDER_ID를 입력하는 입력 박스를 제공할 것.
-     */
-    private long productId;
-    private long companyId;
-    private long orderId;
 
-    private String receiveDate;
+    private long orderId;
     private String orderDate;
 
+    private long productId;
     private String productName;
+    private int orderQuantity;
+
+    private long companyId;
     private String companyName;
 
-    private int orderQuantity;
+    private String receiveDate;
     private int receiveQuantity;
 
     private int orderPrice;

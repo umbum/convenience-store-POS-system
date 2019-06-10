@@ -36,7 +36,6 @@ public class ProductInstockHistoryRepoImpl implements ProductInstockHistoryRepo 
             + "AND O.ORDER_ID = R.ORDER_ID AND RP.COMPANY_ID = C.COMPANY_ID\n"
             + "AND RP.PRODUCT_ID = P.PRODUCT_ID AND R.ORDER_ID = OP.ORDER_ID AND RP.PRODUCT_ID = OP.PRODUCT_ID";
 
-
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
             Date dateDate = dateFormat.parse(date);
@@ -45,6 +44,16 @@ public class ProductInstockHistoryRepoImpl implements ProductInstockHistoryRepo 
             // 잘못된 날짜 형식이 들어왔을 때.
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public List<ProductInstockHistory> readAll(long orderId, long companyId) {
+        String query = "SELECT O.ORDER_ID, O.ORD_DATE AS ORDER_DATE, OP.PRODUCT_ID, P.NAME AS PRODUCT_NAME, OP.QUANTITY AS ORDER_QUANTITY, C.COMPANY_ID, C.COM_NAME AS COMPANY_NAME\n"
+            + "FROM A_ORDER O , ORDER_PRODUCT OP, PRODUCT P ,COMPANY C, SEND S\n"
+            + "WHERE O.ORDER_ID = ? AND C.COMPANY_ID = ? AND S.COMPANY_ID = C.COMPANY_ID AND S.ORDER_ID = O.ORDER_ID\n"
+            + "AND O.ORDER_ID = OP.ORDER_ID AND OP.PRODUCT_ID = P.PRODUCT_ID";
+
+        return jdbcTemplate.query(query, new Object[]{orderId, companyId}, new BeanPropertyRowMapper<>(ProductInstockHistory.class));
     }
 
     /**

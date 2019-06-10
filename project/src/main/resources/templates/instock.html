@@ -59,13 +59,13 @@
                                                 <div class="row">
                                                     <div class="col-4">
                                                         <input type="text" id="order-id" class="form-control"
-                                                               required maxlength="13" pattern="\d{1}|\d{13}"
+                                                               required maxlength="13"
                                                                title="발주 번호는 ?자리입니다."
                                                                placeholder="발주번호를 입력해주세요">
                                                     </div>
                                                     <div class="col-4">
                                                         <input type="text" id="company-id" class="form-control"
-                                                               required maxlength="13" pattern="\d{1}|\d{13}"
+                                                               required maxlength="13"
                                                                title="업체 번호는 ?자리입니다."
                                                                placeholder="업체번호를 입력해주세요">
                                                     </div>
@@ -176,27 +176,69 @@
         const $datatable = $table.DataTable({
             "ajax": {
                 "url": $table.data("url") + "0",
-                "dataSrc": function (histories) {
-                    let hiddenOrderNum = 1;
-                    for (let i = 0; i < histories.length; i++) {
-                        histories[i].no = i + 1;
-                        histories[i].hiddenOrder = hiddenOrderNum;
-                        histories[i].status = "normal";
-                        if (histories[i].receiveQuantity === undefined) {
-                            // 물품이 입고 되어 입고 수량을 기록하기 위해 발주 내역 요청한 경우.
-                            histories[i].receiveQuantity = 0;
-                            histories[i].receiveDate = $datepicker.val().split("/").join("-");
+                "dataSrc": function (o) {
+                    // o is OrderHistory or ProductInstockHistroyList
+                    console.log(o);
+                    if (o.length === 0) {
+                        return [];
+                    }
+                    else if (o.hasOwnProperty("order") && o.order !== null) {
+                        // Json이 OrderHistory인 경우
+                        if (o.companyOrderList.length !== 1) {
+                            alert("불러온 CompanyOrderList의 원소 수가 1개가 아닙니다");
+                            console.log("불러온 CompanyOrderList의 원소 수가 1개가 아닙니다");
+                            return [];
+                        }
+                        const companyOrder = o.companyOrderList[0];
+                        if (companyOrder.receiveCheck === 1) {
+                            $("#history-save-btn").prop("disabled", true);
                         }
                         else {
-                            // 단순 날짜별 입고 조회 요청.
-                            histories[i].receiveDate = histories[i].receiveDate.split(" ")[0];
+                            $("#history-save-btn").prop("disabled", false);
                         }
-                        histories[i].diffQuantity = histories[i].receiveQuantity - histories[i].orderQuantity;
-                        histories[i].orderDate = histories[i].orderDate.split(" ")[0];
-                        hiddenOrderNum += 1;
-                    }
 
-                    return histories;
+                        const dataRows = [];
+                        let i = 0;
+                        for (let orderProduct of companyOrder.orderProductList) {
+                            i += 1;
+                            dataRows.push({
+                                "hiddenOrder": i,
+                                "status": "normal",
+                                "no": i,
+                                "productId": orderProduct.productId,
+                                "productName": orderProduct.productName,
+                                "receiveDate": companyOrder.receiveDate.split(" ")[0],
+                                "orderDate": o.order.orderDate.split(" ")[0],
+                                "companyName": companyOrder.companyName,
+                                "receiveQuantity": orderProduct.receiveQuantity,
+                                "orderQuantity": orderProduct.orderQuantity,
+                                "diffQuantity": orderProduct.receiveQuantity - orderProduct.orderQuantity
+                            });
+                        }
+                        return dataRows;
+                    }
+                    else {
+                        // Json이 ProductInstockHistoryList인 경우
+                        let hiddenOrderNum = 1;
+                        for (let i = 0; i < o.length; i++) {
+                            o[i].no = i + 1;
+                            o[i].hiddenOrder = hiddenOrderNum;
+                            o[i].status = "normal";
+                            if (o[i].receiveQuantity === undefined) {
+                                // 물품이 입고 되어 입고 수량을 기록하기 위해 발주 내역 요청한 경우.
+                                o[i].receiveQuantity = 0;
+                                o[i].receiveDate = $datepicker.val().split("/").join("-");
+                            }
+                            else {
+                                // 단순 날짜별 입고 조회 요청.
+                                o[i].receiveDate = o[i].receiveDate.split(" ")[0];
+                            }
+                            o[i].diffQuantity = o[i].receiveQuantity - o[i].orderQuantity;
+                            o[i].orderDate = o[i].orderDate.split(" ")[0];
+                            hiddenOrderNum += 1;
+                        }
+                        return o;
+                    }
                 }
             },
             "columnDefs": [
@@ -402,7 +444,6 @@
                     "no": (lastRow) ? lastRow.no + 1 : 1,
                     "productId": product_info.productId,
                     "productName": product_info.name,
-                    "quantity": 1,
                     "receiveDate": $("#date-picker").val().split("/").join("-"),
                     "orderDate": "-",
                     "companyName" : product_info.companyName,
