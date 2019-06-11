@@ -29,7 +29,7 @@ public class IndexController {
 
     @GetMapping("/")
     public String index() {
-        return "index";
+        return "redirect:sales-page";
     }
 
     @GetMapping("/login")
