@@ -25,15 +25,14 @@ public class ProductInstockHistoryRepoImpl implements ProductInstockHistoryRepo 
 
     @Override
     public List<ProductInstockHistory> readAll(String date) {
-
         String query = "SELECT "
             + "R.RCV_DATE AS RECEIVE_DATE, O.ORD_DATE AS ORDER_DATE, "
             + "P.NAME AS PRODUCT_NAME, C.COM_NAME AS COMPANY_NAME, "
             + "RP.QUANTITY AS RECEIVE_QUANTITY, "
             + "OP.QUANTITY AS ORDER_QUANTITY\n"
             + "FROM RECEIVE R, RECEIVE_PRODUCT RP, PRODUCT P, ORDER_PRODUCT OP, A_ORDER O, COMPANY C\n"
-            + "WHERE TRUNC(?) = R.RCV_DATE AND R.ORDER_ID = RP.ORDER_ID\n"
-            + "AND O.ORDER_ID = R.ORDER_ID AND RP.COMPANY_ID = C.COMPANY_ID\n"
+            + "WHERE R.RCV_DATE = TRUNC(?) AND R.ORDER_ID = RP.ORDER_ID\n"
+            + "AND O.ORDER_ID = R.ORDER_ID AND RP.COMPANY_ID = C.COMPANY_ID AND R.COMPANY_ID = C.COMPANY_ID\n"
             + "AND RP.PRODUCT_ID = P.PRODUCT_ID AND R.ORDER_ID = OP.ORDER_ID AND RP.PRODUCT_ID = OP.PRODUCT_ID";
 
         try {
