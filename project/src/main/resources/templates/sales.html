@@ -249,7 +249,6 @@
                                                         class="btn cur-p btn-lg btn-outline-secondary w-100">서비스
                                                 </button>
                                             </div>
-
                                         </div>
                                         <div class="peers pT-20 mT-20 bdT fxw-nw jc-sb ta-c gap-10">
                                             <div class="peer">
@@ -517,9 +516,13 @@
 
             const sales_products = [];
             $("#sales-table-body").find("tr").each(function (idx, dom) {
+                const quantity = parseInt($(dom).find(".quantity").text());
+                const sub_total = parseInt($(dom).find(".sub-total").text());
+                const discount = ($(dom).find(".discount").text() === "") ? 0 : parseInt($(dom).find(".discount").text());
                 sales_products.push({
                     "productId": $(dom).find(".product-id").text(),
-                    "quantity": $(dom).find(".quantity").text()
+                    "quantity": quantity,
+                    "salesPrice": (sub_total - discount) / quantity
                 });
             });
 

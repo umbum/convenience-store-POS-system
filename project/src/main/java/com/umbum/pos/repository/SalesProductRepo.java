@@ -5,7 +5,7 @@ import java.util.List;
 import com.umbum.pos.model.SalesProduct;
 
 public interface SalesProductRepo {
-    public SalesProduct read(long prodCode, long salesNum);
+    public List<SalesProduct> readAll(long salesId);
     public int create(SalesProduct salesProduct);
     public int[] createAll(List<SalesProduct> salesProductList);
 }
