@@ -506,12 +506,8 @@
             const customerId = $(".customer-name").data("customer-id");
             const sales = {
                 "customerId": (customerId !== undefined) ? customerId : null,
-                "amount": $(".total-payment").text()
-            };
-
-            const mileageInfo = {
-                "customerId": (customerId !== undefined) ? customerId : null,
-                "earned-mileage" : $(".mileage-amount").text()
+                "amount": $(".total-payment").text(),
+                "earnedMileage" : $(".mileage-amount").text()
             };
 
             const sales_products = [];
@@ -542,7 +538,6 @@
                     "paymentList": payments,
                     "sales": sales,
                     "salesProductList": sales_products,
-                    "mileageInfo": mileageInfo
                 }),
                 contentType: 'application/json;charset=UTF-8',
                 success: function (str) {

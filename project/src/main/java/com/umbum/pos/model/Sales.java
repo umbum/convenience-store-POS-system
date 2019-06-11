@@ -2,7 +2,6 @@ package com.umbum.pos.model;
 
 import org.springframework.lang.Nullable;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -13,6 +12,8 @@ public class Sales {
 
     @Nullable
     private Long customerId;
+    @Nullable
+    private Integer earnedMileage;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long branchId;
@@ -27,4 +28,5 @@ public class Sales {
     private int cancelCheck;
 
     private int amount;
+
 }

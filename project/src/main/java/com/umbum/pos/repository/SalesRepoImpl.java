@@ -37,7 +37,7 @@ public class SalesRepoImpl implements SalesRepo {
 
     @Override
     public List<Sales> readAll(String date) {
-        String query = "SELECT SALES_ID, CUSTOMER_ID, BRANCH_ID, SALES_TIME, RECEIPT_ID, CANCEL_CHECK, AMOUNT\n"
+        String query = "SELECT SALES_ID, CUSTOMER_ID, BRANCH_ID, SALES_TIME, RECEIPT_ID, CANCEL_CHECK, AMOUNT, EARNED_MILEAGE\n"
             + "FROM SALES\n"
             + "WHERE SALES_TIME BETWEEN TRUNC(?) AND TRUNC(?)";
         try {
@@ -57,7 +57,7 @@ public class SalesRepoImpl implements SalesRepo {
 
     @Override
     public Sales readByReceiptId(long receiptId) {
-        String query = "SELECT SALES_ID, CUSTOMER_ID, BRANCH_ID, SALES_TIME, RECEIPT_ID, CANCEL_CHECK, AMOUNT\n"
+        String query = "SELECT SALES_ID, CUSTOMER_ID, BRANCH_ID, SALES_TIME, RECEIPT_ID, CANCEL_CHECK, AMOUNT, EARNED_MILEAGE\n"
             + "FROM SALES\n"
             + "WHERE RECEIPT_ID = ?;\n";
         Sales sales = null;
@@ -92,8 +92,8 @@ public class SalesRepoImpl implements SalesRepo {
         );
         sales.setReceiptId(sales.getSalesId());
 
-        String query = "INSERT INTO SALES(sales_id, customer_id, branch_id, sales_time, receipt_id, cancel_check, amount) "
-            + "VALUES(?, ?, ?, TO_DATE(?,'YYYYMMDD HH24:MI:SS'), ?, ?, ?)";
+        String query = "INSERT INTO SALES(sales_id, customer_id, branch_id, sales_time, receipt_id, cancel_check, amount, earned_mileage) "
+            + "VALUES(?, ?, ?, TO_DATE(?,'YYYYMMDD HH24:MI:SS'), ?, ?, ?, ?)";
         jdbcTemplate.update(query,
             sales.getSalesId(),
             sales.getCustomerId(),
@@ -101,7 +101,8 @@ public class SalesRepoImpl implements SalesRepo {
             sales.getSalesTime(),
             sales.getReceiptId(),
             sales.getCancelCheck(),
-            sales.getAmount()
+            sales.getAmount(),
+            sales.getEarnedMileage()
             );
 
         return sales.getSalesId();

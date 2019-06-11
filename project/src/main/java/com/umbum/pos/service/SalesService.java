@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.umbum.pos.model.Sales;
 import com.umbum.pos.model.SalesInfo;
+import com.umbum.pos.repository.CancelRepo;
 import com.umbum.pos.repository.CustomerRepo;
 import com.umbum.pos.repository.PaymentRepo;
 import com.umbum.pos.repository.SalesProductRepo;
@@ -21,13 +22,15 @@ public class SalesService {
     private final PaymentRepo paymentRepo;
     private final SalesProductRepo salesProductRepo;
     private final CustomerRepo customerRepo;
+    private final CancelRepo cancelRepo;
 
     public SalesService(SalesRepo salesRepo, PaymentRepo paymentRepo, SalesProductRepo salesProductRepo,
-        CustomerRepo customerRepo) {
+        CustomerRepo customerRepo, CancelRepo cancelRepo) {
         this.salesRepo = salesRepo;
         this.paymentRepo = paymentRepo;
         this.salesProductRepo = salesProductRepo;
         this.customerRepo = customerRepo;
+        this.cancelRepo = cancelRepo;
     }
 
     public boolean isValidSalesInfo(SalesInfo salesInfo) {
@@ -51,10 +54,10 @@ public class SalesService {
         salesProductRepo.createAll(salesInfo.getSalesProductList());
 
         // 고객 정보가 존재하는 경우 mileage 업데이트.
-        if (salesInfo.getMileageInfo().get("customerId") != null) {
+        if (salesInfo.getSales().getCustomerId() != null) {
             customerRepo.update(
-                Long.parseLong(salesInfo.getMileageInfo().get("customerId").toString()),
-                Long.parseLong(salesInfo.getMileageInfo().get("earned-mileage").toString())
+                Long.parseLong(salesInfo.getSales().getCustomerId().toString()),
+                Integer.parseInt(salesInfo.getSales().getEarnedMileage().toString())
             );
         }
 
@@ -78,6 +81,30 @@ public class SalesService {
 
     public SalesInfo getSalesInfo(long receiptId) {
         return null;
+    }
+
+
+    public String cancelSalesInfo(SalesInfo salesInfo) {
+        cancelRepo.create(salesInfo.getSales().getSalesId());
+//        customerRepo.update(salesInfo.getSales().getSalesId(), salesInfo.);
+        /*
+        CUSTOMER 마일리지 회수
+        UPDATE CUSTOMER
+        SET MIL = MIL- ?(AMOUNT)*0.1
+        WHERE CUSTOMER_ID = ?
+
+        판매레코드 CANCEL_CHECK를 변경
+        UPDATE SALES
+        SET CANCEL_CHECK = 1
+        WHERE SALES_ID = ?
+
+        STOCK 레코드 재고 증가
+        UPDATE STOCK
+        SET QUANTITY = QUANTITY + ?(CANCEL_PRODUCT의 QUANTITY)
+        WHERE PRODUCT_ID = ?
+         */
+
+        return "SUCCESS";
     }
 
 }
