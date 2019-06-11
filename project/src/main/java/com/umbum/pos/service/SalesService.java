@@ -1,9 +1,12 @@
 package com.umbum.pos.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.umbum.pos.model.Account;
+import com.umbum.pos.model.Sales;
 import com.umbum.pos.model.SalesInfo;
 import com.umbum.pos.repository.CustomerRepo;
 import com.umbum.pos.repository.PaymentRepo;
@@ -56,6 +59,25 @@ public class SalesService {
         }
 
         return "SUCCESS";
+    }
+
+
+    @Transactional
+    public List<SalesInfo> getSalesInfos(String date) {
+        List<Sales> salesList = salesRepo.readAll(date);
+        ArrayList<SalesInfo> salesInfos = new ArrayList<>();
+        for (Sales sales : salesList) {
+            SalesInfo salesInfo = new SalesInfo();
+            salesInfo.setSales(sales);
+            salesInfo.setSalesProductList(salesProductRepo.readAll(sales.getSalesId()));
+            salesInfo.setPaymentList(paymentRepo.readAll(sales.getSalesId()));
+            salesInfos.add(salesInfo);
+        }
+        return salesInfos;
+    }
+
+    public SalesInfo getSalesInfo(long receiptId) {
+        return null;
     }
 
 }

@@ -1,10 +1,13 @@
 package com.umbum.pos.repository;
 
 import java.sql.PreparedStatement;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -14,7 +17,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.umbum.pos.model.Sales;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Repository
 public class SalesRepoImpl implements SalesRepo {
 
@@ -28,6 +33,41 @@ public class SalesRepoImpl implements SalesRepo {
     public Sales read(long salesId) {
         String query = "SELECT * FROM SALES WHERE SALES_ID = ?";
         return null;
+    }
+
+    @Override
+    public List<Sales> readAll(String date) {
+        String query = "SELECT SALES_ID, CUSTOMER_ID, BRANCH_ID, SALES_TIME, RECEIPT_ID, CANCEL_CHECK, AMOUNT\n"
+            + "FROM SALES\n"
+            + "WHERE SALES_TIME BETWEEN TRUNC(?) AND TRUNC(?)";
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+            Date dateDate = dateFormat.parse(date);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(dateDate);
+            cal.add(Calendar.DATE, 1);
+            Date nextDate = cal.getTime();
+            return jdbcTemplate.query(query, new Object[]{dateDate, nextDate}, new BeanPropertyRowMapper<>(Sales.class));
+        } catch (ParseException e) {
+            // 잘못된 날짜 형식이 들어왔을 때.
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @Override
+    public Sales readByReceiptId(long receiptId) {
+        String query = "SELECT SALES_ID, CUSTOMER_ID, BRANCH_ID, SALES_TIME, RECEIPT_ID, CANCEL_CHECK, AMOUNT\n"
+            + "FROM SALES\n"
+            + "WHERE RECEIPT_ID = ?;\n";
+        Sales sales = null;
+        try {
+            sales = jdbcTemplate.queryForObject(query, new Object[]{receiptId}, new BeanPropertyRowMapper<>(Sales.class));
+        } catch (EmptyResultDataAccessException e) {
+            log.debug("Incorrect result size: expected 1, actual 0");
+        }
+
+        return sales;
     }
 
     /**

@@ -1,11 +1,14 @@
 package com.umbum.pos.repository;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.umbum.pos.model.Payment;
@@ -21,8 +24,22 @@ public class PaymentRepoImpl implements PaymentRepo{
     }
 
     @Override
-    public Payment read() {
-        return null;
+    public List<Payment> readAll(long salesId) {
+        String query = "SELECT P.SALES_ID, P.AMOUNT, P.PAYMENT_CODE, PC.PAYMENT_NAME\n"
+            + "FROM PAYMENT P, PAYMENT_CODE PC\n"
+            + "WHERE P.SALES_ID = ? AND P.PAYMENT_CODE = PC.PAYMENT_CODE";
+
+        return jdbcTemplate.query(query, new Object[]{salesId}, new RowMapper<Payment>() {
+            @Override
+            public Payment mapRow(ResultSet rs, int rowNum) throws SQLException {
+                Payment p = new Payment();
+                p.setSalesId(rs.getLong("sales_id"));
+                p.setAmount(rs.getInt("amount"));
+                p.setPaymentCode(Payment.PaymentCode.fromCode(rs.getInt("payment_code")));
+//                p.setPaymentName(rs.getString("payment_name"));
+                return p;
+            }
+        });
     }
 
     @Override

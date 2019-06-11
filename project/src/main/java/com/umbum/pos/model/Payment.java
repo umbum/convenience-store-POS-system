@@ -26,6 +26,15 @@ public class Payment {
             this.name = name;
         }
 
+        public static PaymentCode fromCode(int _code){
+            for(PaymentCode code : PaymentCode.values()){
+                if (code.getCode() == _code) {
+                    return code;
+                }
+            }
+            throw new IllegalArgumentException();
+        }
+
         public static PaymentCode fromName(String text){
             for(PaymentCode code : PaymentCode.values()){
                 if (code.getName().equals(text)) {

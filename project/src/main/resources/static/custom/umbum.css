@@ -194,3 +194,7 @@
     height : 18vh;
     overflow-y : scroll;
 }
+
+#receipt-paper {
+    overflow-y : scroll;
+}
