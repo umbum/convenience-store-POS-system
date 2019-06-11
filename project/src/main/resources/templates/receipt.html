@@ -184,7 +184,14 @@
                     "searchable": false,
                     "visible": false,
                     "orderable": false
-                }
+                },
+                {
+                    "targets": 7,
+                    "data": "sales",
+                    "searchable": false,
+                    "visible": false,
+                    "orderable": false
+                },
             ],
             "autoWidth": false,
             "pageLength": pageLength,  // 한 페이지의 row 개수 조절하기
@@ -254,16 +261,11 @@
         });
 
         function sendHistoryToServer(e) {
-            const rowList = $datatable.data();
-            const productInstockHistories = [];
-            for (let i = 0; i < rowList.length; i++) {
-                productInstockHistories.push(rowList[i]);
-            }
             $.ajax({
-                url: "/instock-history/" + $datepicker.val().split("/").join(""),
-                type: "POST",
+                url: "/sales",
+                type: "DELETE",
                 data: JSON.stringify(
-                    productInstockHistories
+                    $datatable.row('.selected').data()
                 ),
                 contentType: 'application/json;charset=UTF-8',
                 success: function (str) {
@@ -271,7 +273,7 @@
                     $(e.target).prop("disabled", true);
                     var notice = new PNotify({
                         title: "SUCCESS",
-                        text: '저장 완료',
+                        text: '영수증 취소 완료',
                         type: "success",
                         addclass: 'click-2-close',
                         hide: false
@@ -284,7 +286,7 @@
                 error: function () {
                     var notice = new PNotify({
                         title: 'Error',
-                        text: '서버에 폐기 내역을 전송하는 과정에서 에러가 발생했습니다.',
+                        text: '서버에 영수증 취소를 요청하는 과정에서 에러가 발생했습니다.',
                         type: 'error',
                         addclass: 'click-2-close',
                         hide: false,

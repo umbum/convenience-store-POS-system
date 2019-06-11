@@ -52,7 +52,6 @@ public class SalesRepoImpl implements SalesRepo {
             // 잘못된 날짜 형식이 들어왔을 때.
             throw new RuntimeException(e);
         }
-
     }
 
     @Override
@@ -106,5 +105,14 @@ public class SalesRepoImpl implements SalesRepo {
             );
 
         return sales.getSalesId();
+    }
+
+    @Override
+    public int updateCancelCheck(long salesId) {
+        String query = "UPDATE SALES\n"
+            + "SET CANCEL_CHECK = 1\n"
+            + "WHERE SALES_ID = ?";
+
+        return jdbcTemplate.update(query, salesId);
     }
 }

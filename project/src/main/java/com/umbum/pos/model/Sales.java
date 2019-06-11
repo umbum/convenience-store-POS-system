@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 public class Sales {
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Nullable
     private long salesId;    // PK
 
     @Nullable
@@ -21,7 +21,7 @@ public class Sales {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String salesTime;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Nullable
     private long receiptId;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

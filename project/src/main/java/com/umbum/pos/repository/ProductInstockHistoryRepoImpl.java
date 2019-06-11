@@ -138,4 +138,13 @@ public class ProductInstockHistoryRepoImpl implements ProductInstockHistoryRepo 
 
         return 0;
     }
+
+    @Override
+    public int updateInstockQuantity(long productId, long branchId, int quantity) {
+        String query = "UPDATE STOCK\n"
+            + "        SET QUANTITY = QUANTITY + ?\n"
+            + "        WHERE PRODUCT_ID = ? AND BRANCH_ID = ?";
+
+        return jdbcTemplate.update(query, quantity, productId, branchId);
+    }
 }

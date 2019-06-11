@@ -8,9 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.umbum.pos.model.Sales;
 import com.umbum.pos.model.SalesInfo;
+import com.umbum.pos.model.SalesProduct;
 import com.umbum.pos.repository.CancelRepo;
 import com.umbum.pos.repository.CustomerRepo;
 import com.umbum.pos.repository.PaymentRepo;
+import com.umbum.pos.repository.ProductInstockHistoryRepo;
 import com.umbum.pos.repository.SalesProductRepo;
 import com.umbum.pos.repository.SalesRepo;
 import lombok.extern.slf4j.Slf4j;
@@ -23,14 +25,17 @@ public class SalesService {
     private final SalesProductRepo salesProductRepo;
     private final CustomerRepo customerRepo;
     private final CancelRepo cancelRepo;
+    private final ProductInstockHistoryRepo productInstockHistoryRepo;
 
     public SalesService(SalesRepo salesRepo, PaymentRepo paymentRepo, SalesProductRepo salesProductRepo,
-        CustomerRepo customerRepo, CancelRepo cancelRepo) {
+        CustomerRepo customerRepo, CancelRepo cancelRepo,
+        ProductInstockHistoryRepo productInstockHistoryRepo) {
         this.salesRepo = salesRepo;
         this.paymentRepo = paymentRepo;
         this.salesProductRepo = salesProductRepo;
         this.customerRepo = customerRepo;
         this.cancelRepo = cancelRepo;
+        this.productInstockHistoryRepo = productInstockHistoryRepo;
     }
 
     public boolean isValidSalesInfo(SalesInfo salesInfo) {
@@ -83,26 +88,19 @@ public class SalesService {
         return null;
     }
 
-
-    public String cancelSalesInfo(SalesInfo salesInfo) {
+    @Transactional
+    public String cancelSalesInfo(SalesInfo salesInfo, long branchId) {
         cancelRepo.create(salesInfo.getSales().getSalesId());
-//        customerRepo.update(salesInfo.getSales().getSalesId(), salesInfo.);
-        /*
-        CUSTOMER 마일리지 회수
-        UPDATE CUSTOMER
-        SET MIL = MIL- ?(AMOUNT)*0.1
-        WHERE CUSTOMER_ID = ?
 
-        판매레코드 CANCEL_CHECK를 변경
-        UPDATE SALES
-        SET CANCEL_CHECK = 1
-        WHERE SALES_ID = ?
+        if (salesInfo.getSales().getEarnedMileage() != null) {
+            customerRepo.update(salesInfo.getSales().getSalesId(),  0 - salesInfo.getSales().getEarnedMileage());
+        }
 
-        STOCK 레코드 재고 증가
-        UPDATE STOCK
-        SET QUANTITY = QUANTITY + ?(CANCEL_PRODUCT의 QUANTITY)
-        WHERE PRODUCT_ID = ?
-         */
+        salesRepo.updateCancelCheck(salesInfo.getSales().getSalesId());
+
+        for (SalesProduct salesProduct : salesInfo.getSalesProductList()) {
+            productInstockHistoryRepo.updateInstockQuantity(salesProduct.getProductId(), branchId, salesProduct.getQuantity());
+        }
 
         return "SUCCESS";
     }

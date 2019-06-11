@@ -9,4 +9,5 @@ public interface SalesRepo {
     public Sales readByReceiptId(long receiptId);
     public List<Sales> readAll(String date);
     public long create(Sales sales);
+    public int updateCancelCheck(long salesId);
 }
