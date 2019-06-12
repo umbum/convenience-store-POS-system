@@ -84,7 +84,7 @@ public class OrderHistoryRepoImpl implements OrderHistoryRepo {
 
     @Transactional
     @Override
-    public List<OrderHistory> readAll(String date) {
+    public List<OrderHistory> readAll(String date, long branchId) {
 
         List<OrderHistory> orderHistoryList = new ArrayList<>();
         Date dateDate = null;
@@ -95,14 +95,14 @@ public class OrderHistoryRepoImpl implements OrderHistoryRepo {
             throw new RuntimeException(e);
         }
 
-        String selectOrder = "SELECT ORDER_ID, BRANCH_ID, ORD_DATE AS ORDER_DATE, AMOUNT FROM A_ORDER WHERE ORD_DATE = TRUNC(?)";
+        String selectOrder = "SELECT ORDER_ID, BRANCH_ID, ORD_DATE AS ORDER_DATE, AMOUNT FROM A_ORDER WHERE ORD_DATE = TRUNC(?) AND BRANCH_ID = ?";
         String selectCompanyOrders = "SELECT C.COMPANY_ID, C.COM_NAME AS COMPANY_NAME, S.ORDER_ID, S.SEND_DATE, S.RCV_CHECK AS RECEIVE_CHECK FROM SEND S, COMPANY C WHERE S.ORDER_ID = ? AND S.COMPANY_ID = C.COMPANY_ID";
         String selectOrderProduct = "SELECT O.ORDER_ID, OP.PRODUCT_ID, P.NAME AS PRODUCT_NAME, OP.QUANTITY AS ORDER_QUANTITY, P.ORD_PRI AS ORDER_PRICE\n"
             + "FROM A_ORDER O , ORDER_PRODUCT OP, PRODUCT P ,COMPANY C\n"
             + "WHERE O.ORDER_ID = ? AND C.COMPANY_ID = ? AND C.COMPANY_ID = P.COMPANY_ID\n"
             + "AND O.ORDER_ID = OP.ORDER_ID AND OP.PRODUCT_ID = P.PRODUCT_ID";
 
-        List<Order> orderList = jdbcTemplate.query(selectOrder, new Object[]{dateDate}, new BeanPropertyRowMapper<>(Order.class));
+        List<Order> orderList = jdbcTemplate.query(selectOrder, new Object[]{dateDate, branchId}, new BeanPropertyRowMapper<>(Order.class));
         for (Order order : orderList) {
             List<CompanyOrder> companyOrderList = jdbcTemplate.query(selectCompanyOrders, new Object[]{order.getOrderId()}, new BeanPropertyRowMapper<>(CompanyOrder.class));
             for (CompanyOrder companyOrder : companyOrderList) {

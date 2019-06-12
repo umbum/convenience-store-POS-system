@@ -18,8 +18,8 @@ public class OrderService {
     public OrderHistory getOrderHistoryOfCompany(long orderId, long companyId) {
         return orderHistoryRepo.read(orderId, companyId);
     }
-    public List<OrderHistory> getOrderHistoryBydate(String date) {
-        return orderHistoryRepo.readAll(date);
+    public List<OrderHistory> getOrderHistoryBydate(String date, long branchId) {
+        return orderHistoryRepo.readAll(date, branchId);
     }
 
 }

@@ -2,6 +2,7 @@ package com.umbum.pos.controller;
 
 import java.util.List;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.umbum.pos.model.Account;
 import com.umbum.pos.model.Order.OrderHistory;
 import com.umbum.pos.service.OrderService;
 
@@ -28,8 +30,8 @@ public class OrderController {
 
     @ResponseBody
     @GetMapping("/order")
-    public List<OrderHistory> getOrderHistories(@RequestParam String date) {
-        return orderService.getOrderHistoryBydate(date);
+    public List<OrderHistory> getOrderHistories(@RequestParam String date, @AuthenticationPrincipal Account account) {
+        return orderService.getOrderHistoryBydate(date, account.getBranchId());
     }
 
     @ResponseBody
