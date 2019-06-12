@@ -212,11 +212,15 @@
                 let receiptPaper = "*교환/환불은 반드시 영수증을 지참하셔야 합니다.</br>";
                 receiptPaper += "</br>--------------------------------------</br>";
                 for (const salesProduct of salesInfo.salesProductList) {
-                    receiptPaper += `${salesProduct.productName}      ${salesProduct.salesPrice}</br>`;
+                    receiptPaper += `${salesProduct.productName}      ${salesProduct.salesPrice} * ${salesProduct.quantity}</br>`;
                 }
                 receiptPaper += "</br>--------------------------------------</br>";
                 for (const payment of salesInfo.paymentList) {
                     receiptPaper += `${payment.paymentCode}      ${payment.amount}</br>`;
+                }
+                if (salesInfo.sales.customerId !== null && salesInfo.sales.earnedMileage !== null) {
+                    receiptPaper += "</br>--------------------------------------</br>";
+                    receiptPaper += `고객ID : ${salesInfo.sales.customerId}  /  적립 마일리지 : ${salesInfo.sales.earnedMileage}</br>`;
                 }
 
                 $("#receipt-paper").html(receiptPaper);
