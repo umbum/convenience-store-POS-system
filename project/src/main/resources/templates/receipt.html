@@ -1,0 +1,312 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="fragments/general.html :: header"></div>
+    <link href="/custom/pnotify/pnotify.custom.css" rel="stylesheet">
+    <link href="/custom/daterangepicker/daterangepicker.css" rel="stylesheet">
+    <link href="/custom/DataTables/datatables.css" rel="stylesheet">
+</head>
+<body class="app">
+<div id="loader">
+    <div class="spinner"></div>
+</div>
+<script>window.addEventListener('load', function load() {
+    const loader = document.getElementById('loader');
+    setTimeout(function () {
+        loader.classList.add('fadeOut');
+    }, 300);
+});</script>
+<div>
+    <div th:replace="fragments/general.html :: sidebar"></div>
+    <div class="page-container">
+        <div th:replace="fragments/general.html :: navbar"></div>
+        <main class="main-content bgc-grey-100">
+            <div id="mainContent">
+                <div class="full-container">
+                    <div class="bgc-white remain-height">
+                        <div class="peers fxw-nw ai-s">
+                            <div class="peer bdL p-20 w-100">
+                                <div class="layers pY-10 pX-20">
+                                    <div class="layer w-100">
+                                        <h4 class="c-grey-900 bdB">영수증 조회 / 환불</h4>
+                                    </div>
+                                    <div class="layer w-100 mB-10 p-10 bdB">
+                                        <div class="form-group row">
+                                            <label for="date-picker"
+                                                   class="col-sm-2 col-form-label c-grey-900 umbum-label">거래일자</label>
+
+                                            <div class="col-sm-4 input-daterange input-group input-group-icon">
+                                    <span class="input-group-addon">
+                                       <span class="icon"><i class="fa fa-calendar"></i></span>
+                                    </span>
+                                                <input type="text" id="date-picker" class="form-control text-center"/>
+                                            </div>
+
+
+                                            <div class="col-sm-6">
+                                                <button type="button"
+                                                        class="btn cur-p btn-info pull-right history-search-btn">
+                                                    <i
+                                                            class="fa fa-search">&nbsp;&nbsp;영수증 조회하기</i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="layer w-100 mB-10 row">
+                                        <div class="col-8">
+
+
+                                            <table class="table table-striped umbum-table-tbody-row-height"
+                                                   id="datatable"
+                                                   data-url="/receipt">
+                                                <thead class="text-center">
+                                                <tr>
+                                                    <th>일자</th>
+                                                    <th>영수증</th>
+                                                    <th>고객번호</th>
+                                                    <th>총액</th>
+                                                    <th>취소여부</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody class="table-bordered">
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="col-4 bdL" id="receipt-paper">
+
+                                        </div>
+                                    </div>
+                                    <div class="layer w-100 mB-10 text-center">
+                                        <button type="button"
+                                                class="btn cur-p btn-lg btn-dark w-25" id="history-save-btn">반품하기
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!--        <footer th:replace="fragments/general.html :: footer"></footer>-->
+    </div>
+</div>
+<script th:replace="fragments/general.html :: common-script"></script>
+<script type="text/javascript" src="/custom/jquery-3.4.1.js"></script>
+<script type="text/javascript" src="/custom/pnotify/pnotify.custom.js"></script>
+<script type="text/javascript" src="/custom/moment.min.js"></script>
+<script type="text/javascript" src="/custom/daterangepicker/daterangepicker.js"></script>
+<script type="text/javascript" src="/custom/DataTables/datatables.js"></script>
+
+<script>
+    $(function () {
+
+        /**
+         * data range picker init
+         */
+        const $datepicker = $('#date-picker');
+        $datepicker.daterangepicker({
+            "singleDatePicker": true,
+            locale: {
+                format: 'YYYY/MM/DD'
+            }
+        }, function (start, end, label) {
+            // callback
+        });
+
+
+        /**
+         *  DataTable init
+         */
+        var $table = $('#datatable');
+        const pageLength = 6;
+        const $datatable = $table.DataTable({
+            "ajax": {
+                "url": $table.data("url") + "?date=" + $datepicker.val().split("/").join(""),
+                "dataSrc": function (salesInfoList) {
+                    console.log(salesInfoList);
+                    salesInfoList.forEach(function (salesInfo) {
+                        salesInfo.salesTime   = salesInfo.sales.salesTime;
+                        salesInfo.receiptId   = salesInfo.sales.receiptId;
+                        salesInfo.customerId  = salesInfo.sales.customerId;
+                        salesInfo.amount      = salesInfo.sales.amount;
+                        salesInfo.cancelCheck = salesInfo.sales.cancelCheck;
+                    });
+                    return salesInfoList;
+                }
+            },
+            "columnDefs": [
+                {
+                    "targets": 0,
+                    "data": "salesTime",
+                    "width": "40px",
+                    "searchable": false,
+                    className: "text-center"
+                },
+                {
+                    "targets": 1,
+                    "data": "receiptId",
+                    "width": "40px",
+                    className: "text-center"
+                },
+                {
+                    "targets": 2,
+                    "data": "customerId",
+                    "width": "40px",
+                    className: 'text-center',
+                    "orderable": false,
+                },
+                {
+                    "targets": 3,
+                    "data": "amount",
+                    "width": "40px",
+                    className: 'text-center',
+                    "searchable": false
+                },
+                {
+                    "targets": 4,
+                    "data": "cancelCheck",
+                    "width": "20px",
+                    className: 'text-center',
+                    "searchable": false
+                },
+                {
+                    "targets": 5,
+                    "data": "paymentList",
+                    "searchable": false,
+                    "visible": false,
+                    "orderable": false
+                },
+                {
+                    "targets": 6,
+                    "data": "salesProductList",
+                    "searchable": false,
+                    "visible": false,
+                    "orderable": false
+                },
+                {
+                    "targets": 7,
+                    "data": "sales",
+                    "searchable": false,
+                    "visible": false,
+                    "orderable": false
+                },
+            ],
+            "autoWidth": false,
+            "pageLength": pageLength,  // 한 페이지의 row 개수 조절하기
+            "lengthChange": false,     // 상단의 row 개수 선택 버튼 show # entries 안뜨게하기
+            "language": {
+                "searchPlaceholder": "search"
+            },
+            "retrieve": true,
+        });
+        $('#datatable tbody').on( 'click', 'tr', function () {
+            if ( $(this).hasClass('selected') ) {
+                $(this).removeClass('selected');
+            }
+            else {
+                $datatable.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+                const salesInfo = $datatable.row(this).data();
+                let receiptPaper = "*교환/환불은 반드시 영수증을 지참하셔야 합니다.</br>";
+                receiptPaper += "</br>--------------------------------------</br>";
+                for (const salesProduct of salesInfo.salesProductList) {
+                    receiptPaper += `${salesProduct.productName}      ${salesProduct.salesPrice} * ${salesProduct.quantity}</br>`;
+                }
+                receiptPaper += "</br>--------------------------------------</br>";
+                for (const payment of salesInfo.paymentList) {
+                    receiptPaper += `${payment.paymentCode}      ${payment.amount}</br>`;
+                }
+                if (salesInfo.sales.customerId !== null && salesInfo.sales.earnedMileage !== null) {
+                    receiptPaper += "</br>--------------------------------------</br>";
+                    receiptPaper += `고객ID : ${salesInfo.sales.customerId}  /  적립 마일리지 : ${salesInfo.sales.earnedMileage}</br>`;
+                }
+
+                $("#receipt-paper").html(receiptPaper);
+            }
+        });
+
+
+        /**
+         * 조회 버튼에 ajax click event로 receipt가져오기
+         */
+        $(".history-search-btn").on("click", function (e) {
+            const selectedDate = $datepicker.val().split("/").join("");
+            $datatable.ajax.url('/receipt?date=' + selectedDate).load();
+        });
+
+        function appendReceiveQuantityInputBox() {
+            $("#datatable tbody").on("mousedown", "tr td.receive-quantity", function (e) {
+                // 여기서 this는 td.receive-quantity
+                const receiveQuantityCell = $datatable.cell(this);
+                const diffQuantityCell = $datatable.cell($(this).parent().children("td.diff-quantity"));
+                const orderQuantityCell = $datatable.cell($(this).parent().children("td.order-quantity"));
+
+                // event.button대신 event.which를 써야 브라우저마다 다른 마우스 입력 코드를 통일할 수 있다.
+                if (event.which === 1) {
+                    receiveQuantityCell.data(receiveQuantityCell.data() + 1).draw();
+                } else if (event.which === 2 && receiveQuantityCell.data() > 0) {
+                    receiveQuantityCell.data(receiveQuantityCell.data() - 1).draw();
+                }
+
+                diffQuantityCell.data(receiveQuantityCell.data() - orderQuantityCell.data()).draw();
+            });
+        }
+
+        appendReceiveQuantityInputBox();
+
+
+        /**
+         * 저장 버튼 event ajax post
+         */
+        $("#history-save-btn").on("click", function (e) {
+            sendHistoryToServer(e);
+        });
+
+        function sendHistoryToServer(e) {
+            $.ajax({
+                url: "/sales",
+                type: "DELETE",
+                data: JSON.stringify(
+                    $datatable.row('.selected').data()
+                ),
+                contentType: 'application/json;charset=UTF-8',
+                success: function (str) {
+                    // 저장 완료 pnotify
+                    $(e.target).prop("disabled", true);
+                    var notice = new PNotify({
+                        title: "SUCCESS",
+                        text: '영수증 취소 완료',
+                        type: "success",
+                        addclass: 'click-2-close',
+                        hide: false
+                    });
+
+                    notice.get().click(function () {
+                        notice.remove();
+                    });
+                },
+                error: function () {
+                    var notice = new PNotify({
+                        title: 'Error',
+                        text: '서버에 영수증 취소를 요청하는 과정에서 에러가 발생했습니다.',
+                        type: 'error',
+                        addclass: 'click-2-close',
+                        hide: false,
+                    });
+
+                    notice.get().click(function () {
+                        notice.remove();
+                    });
+                }
+            });
+        }
+
+
+    });
+
+
+</script>
+</body>
+</html>

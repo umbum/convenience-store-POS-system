@@ -31,7 +31,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
             .antMatchers("/join").permitAll()
-            .antMatchers("/admin/**").hasRole("ADMIN") // 내부적으로 접두어 "ROLE_"가 붙는다.
+            .antMatchers("/admin/**", "/order-page", "/employee-manaement-page", "/income-statment-page").hasRole("ADMIN")
             .anyRequest().authenticated();
 
         http.csrf().disable();

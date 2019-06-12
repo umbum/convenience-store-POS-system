@@ -2,28 +2,31 @@ package com.umbum.pos.model;
 
 import org.springframework.lang.Nullable;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
 public class Sales {
-    @JsonIgnore
+    @Nullable
     private long salesId;    // PK
 
     @Nullable
     private Long customerId;
+    @Nullable
+    private Integer earnedMileage;
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long branchId;
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String salesTime;
 
-    @JsonIgnore
+    @Nullable
     private long receiptId;
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private int cancelCheck;
 
     private int amount;
+
 }

@@ -10,5 +10,4 @@ public class SalesInfo {
     private Sales sales;
     private List<Payment> paymentList;
     private List<SalesProduct> salesProductList;
-    private Map<String, Object> mileageInfo;
 }

@@ -29,20 +29,19 @@ public class IndexController {
 
     @GetMapping("/")
     public String index() {
-        return "index";
+        return "redirect:sales-page";
     }
 
     @GetMapping("/login")
-    public String login() {
+    public String loginPage() {
         return "signin";
     }
 
     @GetMapping("/join")
-    public String join() { return "/error/404";}
+    public String joinPage() { return "/error/404";}
 
     @ResponseBody
     @PostMapping("/join")
-//    public String postJoin() {
     public String postJoin(@RequestBody Map<String, String> accountInfo) {
         // RequestBody를 못쓴다. Authorities 때문에... 그래서 그냥 메뉴얼하게 처리해주자.
         HashSet<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();

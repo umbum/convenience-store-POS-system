@@ -1,0 +1,431 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="fragments/general.html :: header"></div>
+    <link href="/custom/pnotify/pnotify.custom.css" rel="stylesheet">
+    <link href="/custom/daterangepicker/daterangepicker.css" rel="stylesheet">
+    <link href="/custom/DataTables/datatables.css" rel="stylesheet">
+</head>
+<body class="app">
+<div id="loader">
+    <div class="spinner"></div>
+</div>
+<script>window.addEventListener('load', function load() {
+    const loader = document.getElementById('loader');
+    setTimeout(function () {
+        loader.classList.add('fadeOut');
+    }, 300);
+});</script>
+<div>
+    <div th:replace="fragments/general.html :: sidebar"></div>
+    <div class="page-container">
+        <div th:replace="fragments/general.html :: navbar"></div>
+        <main class="main-content bgc-grey-100">
+            <div id="mainContent">
+                <div class="full-container">
+                    <div class="bgc-white remain-height">
+                        <div class="peers fxw-nw ai-s">
+                            <div class="peer bdL p-20 w-100">
+                                <div class="layers pY-10 pX-20">
+                                    <div class="layer w-100">
+                                        <h4 class="c-grey-900 bdB">발주관리</h4>
+                                    </div>
+                                    <div class="layer w-100 mB-10 p-10 bdB">
+                                        <div class="form-group row">
+                                            <label for="date-picker"
+                                                   class="col-sm-2 col-form-label c-grey-900 umbum-label">발주일자</label>
+                                            <div class="col-sm-4 input-daterange input-group input-group-icon">
+                                    <span class="input-group-addon">
+                                       <span class="icon"><i class="fa fa-calendar"></i></span>
+                                    </span>
+                                                <input type="text" id="date-picker" class="form-control text-center"/>
+                                            </div>
+
+
+                                            <div class="col-sm-6">
+                                                <button type="button"
+                                                        class="btn cur-p btn-info pull-right history-search-btn">
+                                                    <i
+                                                            class="fa fa-search">&nbsp;&nbsp;발주내역 조회하기</i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="layer w-100 mB-10">
+                                        <div class="form-group row">
+                                            <form id="barcode-form" class="col-12">
+                                                <div class="row">
+                                                    <div class="input-group input-group-icon col-4">
+                                                        <span class="input-group-addon">
+                                                            <span class="icon"><i class="fa fa-barcode"></i></span>
+                                                        </span>
+                                                        <input type="text" id="barcode" class="form-control"
+                                                               required maxlength="13"
+                                                               pattern="\d{1,3}"
+                                                               title="barcode는 1-3자리입니다."
+                                                               placeholder="상품 바코드를 입력해주세요">
+                                                    </div>
+                                                    <div class="input-group input-group-icon col-3">
+                                                        <span class="input-group-addon">
+                                                            <span class="icon"><i class="fa fa-barcode"></i></span>
+                                                        </span>
+                                                        <input type="text" id="product-quantity-input"
+                                                               class="form-control"
+                                                               required
+                                                               placeholder="상품 수량을 입력해주세요">
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <button type="submit"
+                                                                class="btn cur-p btn-warning">
+                                                            <i
+                                                                    class="fa fa-search">&nbsp;&nbsp;상품 추가</i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="layer w-100 mB-10">
+                                        <table class="table table-striped umbum-table-tbody-row-height" id="datatable"
+                                               data-url="/order/">
+                                            <thead class="text-center">
+                                            <tr>
+                                                <th></th>
+                                                <th></th>
+                                                <th>No</th>
+                                                <th>발주번호</th>
+                                                <th>발주날짜</th>
+                                                <th>물품번호</th>
+                                                <th>물품명</th>
+                                                <th>업체명</th>
+                                                <th>발주단가</th>
+                                                <th>발주수량</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody class="table-bordered">
+
+                                            </tbody>
+                                            <tfoot>
+                                            <tr>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th class="text-center">합계</th>
+                                                <th></th>
+                                                <th class="total-amount text-right"></th>
+                                                <th class="total-quantity text-right"></th>
+                                            </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                    <div class="layer w-100 mB-10 text-center">
+                                        <button type="button"
+                                                class="btn cur-p btn-lg btn-dark w-25" id="history-save-btn">발주등록
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!--        <footer th:replace="fragments/general.html :: footer"></footer>-->
+    </div>
+</div>
+<script th:replace="fragments/general.html :: common-script"></script>
+<script type="text/javascript" src="/custom/jquery-3.4.1.js"></script>
+<script type="text/javascript" src="/custom/pnotify/pnotify.custom.js"></script>
+<script type="text/javascript" src="/custom/moment.min.js"></script>
+<script type="text/javascript" src="/custom/daterangepicker/daterangepicker.js"></script>
+<script type="text/javascript" src="/custom/DataTables/datatables.js"></script>
+
+<script>
+    $(function () {
+        /**
+         * data range picker init
+         */
+        const $datepicker = $('#date-picker');
+        $datepicker.daterangepicker({
+            "singleDatePicker": true,
+            locale: {
+                format: 'YYYY/MM/DD'
+            }
+        }, function (start, end, label) {
+            // callback
+        });
+
+
+        /**
+         *  DataTable init
+         */
+        var $table = $('#datatable');
+        const pageLength = 6;
+        const $datatable = $table.DataTable({
+            "ajax": {
+                "url": $table.data("url") + "?date=" + $datepicker.val().split("/").join(""),
+                "dataSrc": function (orderHistoryList) {
+                    // o is List<OrderHistory>
+                    console.log(orderHistoryList);
+
+                    const dataRows = [];
+                    let i = 0;
+                    for (let orderHistory of orderHistoryList) {
+                        for (let companyOrder of orderHistory.companyOrderList) {
+                            for (let orderProduct of companyOrder.orderProductList) {
+                                i += 1;
+                                dataRows.push({
+                                    "hiddenOrder": i,
+                                    "status": "normal",
+                                    "no": i,
+                                    "orderId": orderHistory.order.orderId,
+                                    "orderDate": orderHistory.order.orderDate.split(" ")[0],
+                                    "productId": orderProduct.productId,
+                                    "productName": orderProduct.productName,
+                                    "companyName": companyOrder.companyName,
+                                    "orderPrice" : orderProduct.orderPrice,
+                                    "orderQuantity": orderProduct.orderQuantity
+                                });
+                            }
+                        }
+                    }
+                    return dataRows;
+                }
+            },
+            "columnDefs": [
+                {"targets": 0, "data": "hiddenOrder", "orderable": false, "visible": false, "searchable": false},
+                {
+                    "targets": 1,
+                    "data": "status",
+                    "orderable": false,
+                    "visible": false,
+                    "searchable": false,
+                    className: "status"
+                },
+                {
+                    "targets": 2,
+                    "searchable": false,
+                    "data": "no",
+                    "width": "10px",
+                    className: 'text-center'
+                },
+                {
+                    "targets": 3,
+                    "data": "orderId",
+                    "width": "40px",
+                    className: 'text-center'
+                },
+                {
+                    "targets": 4,
+                    "data": "orderDate",
+                    "width": "40px",
+                    className: 'text-center',
+                    "searchable": false,
+                },
+                {
+                    "targets": 5,
+                    "data": "productId",
+                    "orderable": false,
+                    "visible": false,
+                    "searchable": false,
+                    className: 'text-center product-id'
+                },
+                {
+                    "targets": 6,
+                    "data": "productName",
+                    "width": "100px",
+                    "orderable": false,
+                    className: 'text-center'
+                },
+                {
+                    "targets": 7,
+                    "data": "companyName",
+                    "width": "100px",
+                    className: 'text-center'
+                },
+                {
+                    "targets": 8,
+                    "data": "orderPrice",
+                    "width": "20px",
+                    "orderable": false,
+                    "searchable": false,
+                    className: 'text-center'
+                },
+                {
+                    "targets": 9,
+                    "data": "orderQuantity",
+                    "width": "20px",
+                    "orderable": false,
+                    "searchable": false,
+                    className: 'text-center order-quantity'
+                }
+            ],
+            "autoWidth": false,
+            "pageLength": pageLength,  // 한 페이지의 row 개수 조절하기
+            "lengthChange": false,     // 상단의 row 개수 선택 버튼 show # entries 안뜨게하기
+            "language": {
+                "searchPlaceholder": "search"
+            },
+            "retrieve": true,
+            "footerCallback": function (tfoot, dataList, start, end, display) {
+                $(tfoot).find('.total-quantity')
+                    .html(dataList.reduce((a, data) => a + data.quantity, 0));
+            }
+        });
+
+
+        /**
+         * 조회 버튼에 ajax click event로 order-history 가져오기
+         */
+        $(".history-search-btn").on("click", function (e) {
+            $("#history-save-btn").prop("disabled", true);
+            const selectedDate = $datepicker.val().split("/").join("");
+            $datatable.ajax.url('/order?date=' + selectedDate).load();
+        });
+
+
+
+        /**
+         * 상품 코드 검색 및 row 추가
+         */
+        const form = document.querySelector("#barcode-form");
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            // product_info를 ajax request
+            const $barcode_dom = $('#barcode');
+            const $product_quantity = $("#product-quantity-input");
+            $.ajax({
+                url: `/product/${$barcode_dom.val()}`,
+                type: "GET",
+                contentType: 'application/json;charset=UTF-8',
+                success: function (product_info) {
+                    if (product_info !== "") {
+                        addDataTableRow(product_info, $product_quantity.val());
+                        $barcode_dom.val("");
+                        $product_quantity.val("");
+                    } else {
+                        var notice = new PNotify({
+                            title: 'Notice',
+                            text: '없는 상품입니다.',
+                            type: 'notice',
+                            addclass: 'click-2-close',
+                            hide: false,
+                        });
+
+                        notice.get().click(function () {
+                            notice.remove();
+                        });
+                    }
+
+                },
+                error: function () {
+                    var notice = new PNotify({
+                        title: 'Error',
+                        text: '서버에서 상품 내역을 받아 오는 과정에서 에러가 발생했습니다.',
+                        type: 'error',
+                        addclass: 'click-2-close',
+                        hide: false,
+                    });
+
+                    notice.get().click(function () {
+                        notice.remove();
+                    });
+                }
+            });
+
+        });
+
+        function addDataTableRow(product_info, orderQuantity) {
+            const table = $datatable;
+
+            // datatable은 무조건 rowIdx를 구해야 한다. 그냥 내가 원하는 row 반환받고 거기다가 뭔가를 적용하면 바보같이 동작함. 왜 이렇게 만들었는지 모르겠음..
+            const rowIdx = table.rows().eq(0).filter(function (rowIdx) {
+                return table.cell(rowIdx, ".product-id").data() === product_info.productId;
+            });
+
+            if (rowIdx.length !== 0) {
+                // 기존 테이블에 존재하던 상품이면 quantity만 증가
+                // 여기서 diff-quantity도 같이 갱신해줘야함. 굳이 필요 없는 기능이라 뺐다.
+            } else {
+                // 기존 테이블에 없던 상품이면 추가.
+                const lastRow = table.row(":last").data();
+                const newRow = table.row.add({
+                    "hiddenOrder": (lastRow) ? lastRow.hiddenOrder + 1 : 1,
+                    "status": "create",
+                    "no": (lastRow) ? lastRow.no + 1 : 1,
+                    "orderId": "-",
+                    "productId": product_info.productId,
+                    "productName": product_info.name,
+                    "companyName": product_info.companyName,
+                    "orderDate": $("#date-picker").val().split("/").join("-"),
+                    "orderPrice": product_info.orderPrice,
+                    "orderQuantity": orderQuantity,
+                }).draw().node();
+                $(newRow).css("color", "red");
+            }
+        }
+
+
+        /**
+         * 저장 버튼 event ajax post
+         */
+        $("#history-save-btn").on("click", function (e) {
+            sendHistoryToServer(e);
+        });
+
+        function sendHistoryToServer(e) {
+            const rowList = $datatable.data();
+            const orderProductList = [];
+            for (let i = 0; i < rowList.length; i++) {
+                const row = rowList[i];
+                orderProductList.push(rowList[i]);
+            }
+            console.log(orderProductList);
+            $.ajax({
+                url: "/order",
+                type: "POST",
+                data: JSON.stringify(
+                    orderProductList
+                ),
+                contentType: 'application/json;charset=UTF-8',
+                success: function (str) {
+                    $(e.target).prop("disabled", true);
+                    var notice = new PNotify({
+                        title: "SUCCESS",
+                        text: '발주 완료',
+                        type: "success",
+                        addclass: 'click-2-close',
+                        hide: false
+                    });
+
+                    notice.get().click(function () {
+                        notice.remove();
+                    });
+                },
+                error: function () {
+                    var notice = new PNotify({
+                        title: 'Error',
+                        text: '서버에 발주 요청하는 과정에서 에러가 발생했습니다.',
+                        type: 'error',
+                        addclass: 'click-2-close',
+                        hide: false,
+                    });
+
+                    notice.get().click(function () {
+                        notice.remove();
+                    });
+                }
+            });
+        }
+
+
+    });
+
+
+</script>
+</body>
+</html>

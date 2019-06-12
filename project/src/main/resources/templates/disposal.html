@@ -45,9 +45,9 @@
 
                                             <div class="col-sm-6">
                                                 <button type="button"
-                                                        class="btn cur-p btn-info pull-right disposal-history-search-btn">
+                                                        class="btn cur-p btn-info pull-right history-search-btn">
                                                     <i
-                                                            class="fa fa-search">&nbsp;&nbsp;조회</i>
+                                                            class="fa fa-search">&nbsp;&nbsp;폐기내역 조회하기</i>
                                                 </button>
                                             </div>
                                         </div>
@@ -99,7 +99,7 @@
                                     </div>
                                     <div class="layer w-100 mB-10 text-center">
                                         <button type="button"
-                                                class="btn cur-p btn-lg btn-dark w-25" id="disposal-history-save-btn">저장
+                                                class="btn cur-p btn-lg btn-dark w-25" id="history-save-btn">폐기등록
                                         </button>
                                     </div>
                                 </div>
@@ -139,7 +139,7 @@
         /**
          *  DataTable init
          */
-        var $table = $('#datatable');
+        const $table = $('#datatable');
         const pageLength = 5;
         const $datatable = $table.DataTable({
             "ajax": {
@@ -152,7 +152,6 @@
                         disposalHistories[i].status = "normal";
                         hiddenOrderNum += 1;
                     }
-                    // appendDummyRow(disposalHistories, pageLength, hiddenOrderNum)
                     return disposalHistories;
                 }
             },
@@ -183,7 +182,7 @@
                 },
                 {
                     "targets": 6,
-                    "data": "date",
+                    "data": "disDate",
                     "width": "150px",
                     "orderable": false,
                     "searchable" : false,
@@ -206,7 +205,7 @@
         /**
          * 조회 버튼에 ajax click event로 disposal-history 가져오기
          */
-        $(".disposal-history-search-btn").on("click", function (e) {
+        $(".history-search-btn").on("click", function (e) {
             const selectedDate = $datepicker.val().split("/").join("");
             $datatable.ajax.url('/disposal-history/' + selectedDate).load();
         });
@@ -227,7 +226,6 @@
                     if (product_info !== "") {
 
                         addDataTableRow(product_info);
-                        // updateEventInfoSection(product_info);
                         barcode_dom.val("");
                     } else {
                         var notice = new PNotify({
@@ -290,29 +288,34 @@
                     "productId" : product_info.productId,
                     "productName" : product_info.name,
                     "quantity" : 1,
-                    "date" : $("#date-picker").val().split("/").join("")
+                    "disDate" : $("#date-picker").val().split("/").join("")
                 }).draw().node();
                 $(newRow).css("color", "red");
             }
-
         }
-
 
         /**
          * 저장 버튼 event ajax post
          */
-        $("#disposal-history-save-btn").on("click", function (e) {
+        $("#history-save-btn").on("click", function (e) {
             sendDisposalHistoryToServer(e);
         });
 
         function sendDisposalHistoryToServer(e) {
+            const rowList = $datatable.data();
+            const disposalProducts = [];
+            for (let i = 0; i < rowList.length; i++) {
+                disposalProducts.push(rowList[i]);
+            }
+            const updatedDisposalProducts = disposalProducts.filter((d) => d.status === "update");
+            const createdDisposalProducts = disposalProducts.filter((d) => d.status === "create");
+
             $.ajax({
-                url: "/disposal-history/" + $datepicker.val().split("/").join(""),
+                url: "/disposal-history",
                 type: "POST",
                 data: JSON.stringify({
-                    "paymentList": 1,
-                    "sales": 1,
-                    "salesProductList": 1
+                    "update": updatedDisposalProducts,
+                    "create": createdDisposalProducts
                 }),
                 contentType: 'application/json;charset=UTF-8',
                 success: function (str) {
@@ -322,11 +325,6 @@
                         title: "SUCCESS",
                         text: '저장 완료',
                         type: "success",
-                        // addclass: 'click-2-close',
-                        // buttons: {
-                        //     closer: false,
-                        //     sticker: false
-                        // }
                     });
 
                     notice.get().click(function () {

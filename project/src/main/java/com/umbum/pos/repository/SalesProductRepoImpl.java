@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -19,8 +20,11 @@ public class SalesProductRepoImpl implements SalesProductRepo {
     }
 
     @Override
-    public SalesProduct read(long prodCode, long salesNum) {
-        return null;
+    public List<SalesProduct> readAll(long salesId) {
+        String query = "SELECT SP.SALES_ID, SP.PRODUCT_ID, P.NAME AS PRODUCT_NAME, QUANTITY, SP.SALES_PRICE\n"
+            + "FROM SALES_PRODUCT SP, PRODUCT P\n"
+            + "WHERE SP.SALES_ID = ? AND SP.PRODUCT_ID = P.PRODUCT_ID";
+        return jdbcTemplate.query(query, new Object[]{salesId}, new BeanPropertyRowMapper<>(SalesProduct.class));
     }
 
     @Override
@@ -31,8 +35,8 @@ public class SalesProductRepoImpl implements SalesProductRepo {
     @Override
     public int[] createAll(List<SalesProduct> salesProductList) {
 
-        String query = "INSERT INTO SALES_PRODUCT(SALES_ID, PRODUCT_ID, QUANTITY) "
-            + "VALUES(?, ?, ?)";
+        String query = "INSERT INTO SALES_PRODUCT(SALES_ID, PRODUCT_ID, QUANTITY, SALES_PRICE) "
+            + "VALUES(?, ?, ?, ?)";
 
         int[] updateCounts = jdbcTemplate.batchUpdate(query, new BatchPreparedStatementSetter() {
             @Override
@@ -40,6 +44,7 @@ public class SalesProductRepoImpl implements SalesProductRepo {
                 ps.setString(1, Long.toString(salesProductList.get(i).getSalesId()));
                 ps.setString(2, Long.toString(salesProductList.get(i).getProductId()));
                 ps.setString(3, Integer.toString(salesProductList.get(i).getQuantity()));
+                ps.setString(4, Integer.toString(salesProductList.get(i).getSalesPrice()));
             }
 
             @Override
