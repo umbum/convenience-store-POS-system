@@ -72,6 +72,7 @@
                                                         </span>
                                                         <input type="text" id="product-quantity-input"
                                                                class="form-control"
+                                                               required
                                                                placeholder="상품 수량을 입력해주세요">
                                                     </div>
                                                     <div class="col-sm-2">
@@ -278,7 +279,7 @@
 
 
         /**
-         * 조회 버튼에 ajax click event로 instock-history 가져오기
+         * 조회 버튼에 ajax click event로 order-history 가져오기
          */
         $(".history-search-btn").on("click", function (e) {
             $("#history-save-btn").prop("disabled", true);
@@ -288,29 +289,6 @@
 
 
 
-        // 동시에 received-quantity에 input을 달아서 입고 개수를 입력할 수 있도록 하고
-        // 입고 개수가 변경될 때 차이 수량을 계산하고 datatable의 .data에도 반영할 수 있도록.
-        function appendReceiveQuantityInputBox() {
-            $("#datatable tbody").on("mousedown", "tr td.receive-quantity", function (e) {
-                // 여기서 this는 td.receive-quantity
-                const receiveQuantityCell = $datatable.cell(this);
-                const diffQuantityCell = $datatable.cell($(this).parent().children("td.diff-quantity"));
-                const orderQuantityCell = $datatable.cell($(this).parent().children("td.order-quantity"));
-
-                // event.button대신 event.which를 써야 브라우저마다 다른 마우스 입력 코드를 통일할 수 있다.
-                if (event.which === 1) {
-                    receiveQuantityCell.data(receiveQuantityCell.data() + 1).draw();
-                } else if (event.which === 2 && receiveQuantityCell.data() > 0) {
-                    receiveQuantityCell.data(receiveQuantityCell.data() - 1).draw();
-                }
-
-                diffQuantityCell.data(receiveQuantityCell.data() - orderQuantityCell.data()).draw();
-            });
-        }
-
-        appendReceiveQuantityInputBox();
-
-
         /**
          * 상품 코드 검색 및 row 추가
          */
@@ -318,15 +296,17 @@
         form.addEventListener("submit", function (e) {
             e.preventDefault();
             // product_info를 ajax request
-            const barcode_dom = $('#barcode');
+            const $barcode_dom = $('#barcode');
+            const $product_quantity = $("#product-quantity-input");
             $.ajax({
-                url: `/product/${barcode_dom.val()}`,
+                url: `/product/${$barcode_dom.val()}`,
                 type: "GET",
                 contentType: 'application/json;charset=UTF-8',
                 success: function (product_info) {
                     if (product_info !== "") {
-                        addDataTableRow(product_info);
-                        barcode_dom.val("");
+                        addDataTableRow(product_info, $product_quantity.val());
+                        $barcode_dom.val("");
+                        $product_quantity.val("");
                     } else {
                         var notice = new PNotify({
                             title: 'Notice',
@@ -359,7 +339,7 @@
 
         });
 
-        function addDataTableRow(product_info) {
+        function addDataTableRow(product_info, orderQuantity) {
             const table = $datatable;
 
             // datatable은 무조건 rowIdx를 구해야 한다. 그냥 내가 원하는 row 반환받고 거기다가 뭔가를 적용하면 바보같이 동작함. 왜 이렇게 만들었는지 모르겠음..
@@ -377,14 +357,13 @@
                     "hiddenOrder": (lastRow) ? lastRow.hiddenOrder + 1 : 1,
                     "status": "create",
                     "no": (lastRow) ? lastRow.no + 1 : 1,
+                    "orderId": "-",
                     "productId": product_info.productId,
                     "productName": product_info.name,
-                    "receiveDate": $("#date-picker").val().split("/").join("-"),
-                    "orderDate": "-",
                     "companyName": product_info.companyName,
-                    "receiveQuantity": 0,
-                    "orderQuantity": 0,
-                    "diffQuantity": 0
+                    "orderDate": $("#date-picker").val().split("/").join("-"),
+                    "orderPrice": product_info.orderPrice,
+                    "orderQuantity": orderQuantity,
                 }).draw().node();
                 $(newRow).css("color", "red");
             }
@@ -400,23 +379,24 @@
 
         function sendHistoryToServer(e) {
             const rowList = $datatable.data();
-            const productInstockHistories = [];
+            const orderProductList = [];
             for (let i = 0; i < rowList.length; i++) {
-                productInstockHistories.push(rowList[i]);
+                const row = rowList[i];
+                orderProductList.push(rowList[i]);
             }
+            console.log(orderProductList);
             $.ajax({
-                url: "/instock-history",
+                url: "/order",
                 type: "POST",
                 data: JSON.stringify(
-                    productInstockHistories
+                    orderProductList
                 ),
                 contentType: 'application/json;charset=UTF-8',
                 success: function (str) {
-                    // 저장 완료 pnotify
                     $(e.target).prop("disabled", true);
                     var notice = new PNotify({
                         title: "SUCCESS",
-                        text: '저장 완료',
+                        text: '발주 완료',
                         type: "success",
                         addclass: 'click-2-close',
                         hide: false
@@ -429,7 +409,7 @@
                 error: function () {
                     var notice = new PNotify({
                         title: 'Error',
-                        text: '서버에 폐기 내역을 전송하는 과정에서 에러가 발생했습니다.',
+                        text: '서버에 발주 요청하는 과정에서 에러가 발생했습니다.',
                         type: 'error',
                         addclass: 'click-2-close',
                         hide: false,

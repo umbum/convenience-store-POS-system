@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.umbum.pos.model.Account;
 import com.umbum.pos.model.Order.OrderHistory;
+import com.umbum.pos.model.Order.OrderProduct;
 import com.umbum.pos.service.OrderService;
 
 @Controller
@@ -55,5 +56,14 @@ public class OrderController {
         return (orderHistory != null) ? orderHistory : new OrderHistory();
     }
 
+    @ResponseBody
+    @PostMapping("/order")
+    public int postOrderHistories(@RequestBody List<OrderProduct> orderProducts, @AuthenticationPrincipal Account account) {
+        System.out.println(orderProducts);
+        if (orderProducts.size() == 0) {
+            return 0;
+        }
+        return orderService.saveOrderProducts(orderProducts, account.getBranchId());
+    }
 
 }

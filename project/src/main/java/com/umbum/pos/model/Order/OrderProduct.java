@@ -1,9 +1,11 @@
 package com.umbum.pos.model.Order;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Data
 public class OrderProduct {
+    @JsonIgnore
     private long orderId;
 
     private long productId;
