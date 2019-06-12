@@ -1,8 +1,13 @@
 package com.umbum.pos.controller;
 
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.umbum.pos.model.Order.OrderHistory;
@@ -19,6 +24,12 @@ public class OrderController {
     @GetMapping("/order-page")
     public String orderPage() {
         return "order.html";
+    }
+
+    @ResponseBody
+    @GetMapping("/order")
+    public List<OrderHistory> getOrderHistories(@RequestParam String date) {
+        return orderService.getOrderHistoryBydate(date);
     }
 
     @ResponseBody
@@ -41,4 +52,6 @@ public class OrderController {
         OrderHistory orderHistory = orderService.getOrderHistoryOfCompany(orderId, companyId);
         return (orderHistory != null) ? orderHistory : new OrderHistory();
     }
+
+
 }

@@ -1,5 +1,9 @@
 package com.umbum.pos.repository;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -43,7 +47,7 @@ public class OrderHistoryRepoImpl implements OrderHistoryRepo {
         }
 
         OrderHistory orderHistory = new OrderHistory();
-        String selectOrder = "SELECT BRANCH_ID, ORD_DATE AS ORDER_DATE, AMOUNT FROM A_ORDER WHERE ORDER_ID = ?";
+        String selectOrder = "SELECT ORDER_ID, BRANCH_ID, ORD_DATE AS ORDER_DATE, AMOUNT FROM A_ORDER WHERE ORDER_ID = ?";
         orderHistory.setOrder(
             jdbcTemplate.queryForObject(selectOrder, new Object[]{orderId}, new BeanPropertyRowMapper<>(Order.class))
         );
@@ -78,9 +82,41 @@ public class OrderHistoryRepoImpl implements OrderHistoryRepo {
         return orderHistory;
     }
 
+    @Transactional
     @Override
     public List<OrderHistory> readAll(String date) {
-        return null;
+
+        List<OrderHistory> orderHistoryList = new ArrayList<>();
+        Date dateDate = null;
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+            dateDate = dateFormat.parse(date);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        String selectOrder = "SELECT ORDER_ID, BRANCH_ID, ORD_DATE AS ORDER_DATE, AMOUNT FROM A_ORDER WHERE ORD_DATE = TRUNC(?)";
+        String selectCompanyOrders = "SELECT C.COMPANY_ID, C.COM_NAME AS COMPANY_NAME, S.ORDER_ID, S.SEND_DATE, S.RCV_CHECK AS RECEIVE_CHECK FROM SEND S, COMPANY C WHERE S.ORDER_ID = ? AND S.COMPANY_ID = C.COMPANY_ID";
+        String selectOrderProduct = "SELECT O.ORDER_ID, OP.PRODUCT_ID, P.NAME AS PRODUCT_NAME, OP.QUANTITY AS ORDER_QUANTITY, P.ORD_PRI AS ORDER_PRICE\n"
+            + "FROM A_ORDER O , ORDER_PRODUCT OP, PRODUCT P ,COMPANY C\n"
+            + "WHERE O.ORDER_ID = ? AND C.COMPANY_ID = ? AND C.COMPANY_ID = P.COMPANY_ID\n"
+            + "AND O.ORDER_ID = OP.ORDER_ID AND OP.PRODUCT_ID = P.PRODUCT_ID";
+
+        List<Order> orderList = jdbcTemplate.query(selectOrder, new Object[]{dateDate}, new BeanPropertyRowMapper<>(Order.class));
+        for (Order order : orderList) {
+            List<CompanyOrder> companyOrderList = jdbcTemplate.query(selectCompanyOrders, new Object[]{order.getOrderId()}, new BeanPropertyRowMapper<>(CompanyOrder.class));
+            for (CompanyOrder companyOrder : companyOrderList) {
+                companyOrder.setOrderProductList(
+                    jdbcTemplate.query(selectOrderProduct, new Object[]{order.getOrderId(), companyOrder.getCompanyId()}, new BeanPropertyRowMapper<>(OrderProduct.class))
+                );
+            }
+
+            OrderHistory orderHistory = new OrderHistory();
+            orderHistory.setOrder(order);
+            orderHistory.setCompanyOrderList(companyOrderList);
+            orderHistoryList.add(orderHistory);
+        }
+        return orderHistoryList;
     }
 
     @Override
