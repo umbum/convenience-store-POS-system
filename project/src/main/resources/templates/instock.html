@@ -131,7 +131,7 @@
                                     </div>
                                     <div class="layer w-100 mB-10 text-center">
                                         <button type="button"
-                                                class="btn cur-p btn-lg btn-dark w-25" id="history-save-btn">저장
+                                                class="btn cur-p btn-lg btn-dark w-25" id="history-save-btn">입고등록
                                         </button>
                                     </div>
                                 </div>
@@ -207,7 +207,7 @@
                                 "no": i,
                                 "productId": orderProduct.productId,
                                 "productName": orderProduct.productName,
-                                "receiveDate": companyOrder.receiveDate.split(" ")[0],
+                                "receiveDate": (companyOrder.receiveDate !== null) ? companyOrder.receiveDate.split(" ")[0] : "-",
                                 "orderDate": o.order.orderDate.split(" ")[0],
                                 "companyName": companyOrder.companyName,
                                 "receiveQuantity": orderProduct.receiveQuantity,
