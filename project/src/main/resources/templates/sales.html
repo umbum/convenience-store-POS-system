@@ -540,25 +540,36 @@
                     "salesProductList": sales_products,
                 }),
                 contentType: 'application/json;charset=UTF-8',
-                success: function (str) {
-                    console.log(str);
-                    var notice = new PNotify({
-                        title: "거래 완료",
-                        text: '거래가 정상적으로 완료되었습니다.',
-                        type: "success",
-                    });
+                success: function (result) {
+                    console.log(result);
+                    if (result !== -1) {
+                        var notice = new PNotify({
+                            title: "거래 완료",
+                            text: '거래가 정상적으로 완료되었습니다.',
+                            type: "success",
+                        });
 
-                    notice.get().click(function () {
-                        notice.remove();
-                    });
+                        notice.get().click(function () {
+                            notice.remove();
+                        });
+                    }
+                    else {
+                        var notice = new PNotify({
+                            title: "거래 실패",
+                            text: '거래 정보가 유효하지 않습니다.',
+                            type: "error",
+                        });
 
+                        notice.get().click(function () {
+                            notice.remove();
+                        });
+                    }
                     setTimeout(function () {
                         // 모달 종료
                         $('.close').click();
                         // 판매 내역 초기화
                         clearCntSales();
                     }, 1000);
-
                 },
                 error: function () {
                     var notice = new PNotify({

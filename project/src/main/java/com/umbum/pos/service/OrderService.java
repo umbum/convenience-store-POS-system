@@ -31,14 +31,27 @@ public class OrderService {
         return orderHistoryRepo.readAll(date, branchId);
     }
 
+    public boolean isValidOrderProduct(List<OrderProduct> orderProducts) {
+        if (orderProducts.size() == 0) {
+            return false;
+        }
+
+        for (OrderProduct orderProduct : orderProducts) {
+            if (orderProduct.getOrderQuantity() <= 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public int saveOrderProducts(List<OrderProduct> orderProducts, long branchId) {
         int amount = 0;
         for (OrderProduct orderProduct : orderProducts) {
             amount += orderProduct.getOrderPrice() * orderProduct.getOrderQuantity();
         }
         Order order = orderRepo.create(branchId, amount);
-        orderProductRepo.createAll(order.getOrderId(), orderProducts);
-        return 1;
+        int[] updateCounts = orderProductRepo.createAll(order.getOrderId(), orderProducts);
+        return updateCounts.length;
     }
 
 }

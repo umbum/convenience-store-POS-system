@@ -35,9 +35,9 @@ public class SalesController {
 
     @ResponseBody
     @PostMapping("/sales")
-    public String postSales(@RequestBody SalesInfo salesInfo, @AuthenticationPrincipal Account account) {
+    public int postSales(@RequestBody SalesInfo salesInfo, @AuthenticationPrincipal Account account) {
         if (!salesService.isValidSalesInfo(salesInfo)) {
-            return "FAIL";
+            return -1;
         }
         return salesService.saveSalesInfo(salesInfo, account.getBranchId());
     }
