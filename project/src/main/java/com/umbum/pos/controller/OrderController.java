@@ -59,10 +59,10 @@ public class OrderController {
     @ResponseBody
     @PostMapping("/order")
     public int postOrderHistories(@RequestBody List<OrderProduct> orderProducts, @AuthenticationPrincipal Account account) {
-        System.out.println(orderProducts);
-        if (orderProducts.size() == 0) {
-            return 0;
+        if (!orderService.isValidOrderProduct(orderProducts)) {
+            return -1;
         }
+
         return orderService.saveOrderProducts(orderProducts, account.getBranchId());
     }
 

@@ -24,7 +24,7 @@ public class OrderProductRepoImpl implements OrderProductRepo {
     }
 
     @Override
-    public int createAll(long orderId, List<OrderProduct> orderProduct) {
+    public int[] createAll(long orderId, List<OrderProduct> orderProduct) {
 
         String query = "INSERT INTO ORDER_PRODUCT(ORDER_ID, PRODUCT_ID, QUANTITY)\n"
             + "        VALUES(?,?,?)";
@@ -43,7 +43,7 @@ public class OrderProductRepoImpl implements OrderProductRepo {
             }
         });
 
-        return 1;
+        return updateCounts;
     }
 
     @Override

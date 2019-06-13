@@ -72,7 +72,8 @@
                                                         </span>
                                                         <input type="text" id="product-quantity-input"
                                                                class="form-control"
-                                                               required
+                                                               required maxlength="4"
+                                                               pattern="\d{1,4}"
                                                                placeholder="상품 수량을 입력해주세요">
                                                     </div>
                                                     <div class="col-sm-2">
@@ -392,19 +393,32 @@
                     orderProductList
                 ),
                 contentType: 'application/json;charset=UTF-8',
-                success: function (str) {
+                success: function (result) {
                     $(e.target).prop("disabled", true);
-                    var notice = new PNotify({
-                        title: "SUCCESS",
-                        text: '발주 완료',
-                        type: "success",
-                        addclass: 'click-2-close',
-                        hide: false
-                    });
+                    if (result !== -1) {
+                        var notice = new PNotify({
+                            title: "SUCCESS",
+                            text: '발주 완료',
+                            type: "success",
+                            addclass: 'click-2-close',
+                            hide: false
+                        });
 
-                    notice.get().click(function () {
-                        notice.remove();
-                    });
+                        notice.get().click(function () {
+                            notice.remove();
+                        });
+                    }
+                    else {
+                        var notice = new PNotify({
+                            title: "발주 실패",
+                            text: '발주 정보가 유효하지 않습니다.',
+                            type: "error",
+                        });
+
+                        notice.get().click(function () {
+                            notice.remove();
+                        });
+                    }
                 },
                 error: function () {
                     var notice = new PNotify({

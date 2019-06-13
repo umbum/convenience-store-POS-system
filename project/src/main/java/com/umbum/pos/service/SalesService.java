@@ -39,11 +39,16 @@ public class SalesService {
     }
 
     public boolean isValidSalesInfo(SalesInfo salesInfo) {
+        for (SalesProduct salesProduct : salesInfo.getSalesProductList()) {
+            if (salesProduct.getQuantity() <= 0) {
+                return false;
+            }
+        }
         return true;
     }
 
     @Transactional
-    public String saveSalesInfo(SalesInfo salesInfo, long branchId) {
+    public int saveSalesInfo(SalesInfo salesInfo, long branchId) {
         salesInfo.getSales().setBranchId(branchId);
         long salesId = salesRepo.create(salesInfo.getSales());
 
@@ -55,8 +60,8 @@ public class SalesService {
         });
 
         // 오라클은 update 성공 시 원소가 -2 또는 양수 리턴값을 반환한다. 따라서 int[]는 원소가 -2 또는 양수이고 길이가 update문의 수행 횟수인 배열.
-        paymentRepo.createAll(salesInfo.getPaymentList());
-        salesProductRepo.createAll(salesInfo.getSalesProductList());
+        int[] updateCountsPayment = paymentRepo.createAll(salesInfo.getPaymentList());
+        int[] updateCountsSales = salesProductRepo.createAll(salesInfo.getSalesProductList());
 
         // 고객 정보가 존재하는 경우 mileage 업데이트.
         if (salesInfo.getSales().getCustomerId() != null) {
@@ -66,7 +71,7 @@ public class SalesService {
             );
         }
 
-        return "SUCCESS";
+        return updateCountsPayment.length + updateCountsSales.length;
     }
 
 
