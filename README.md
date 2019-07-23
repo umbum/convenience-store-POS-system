@@ -1,17 +1,17 @@
-# UOS25 편의점 POS 시스템 
+# XXX25 편의점 POS 시스템 
 
 ### Entity Relationship Diagram (ERD)
-<img src="https://raw.githubusercontent.com/umbum/convenience-store-POS-system/master/docs/ERD.bmp"></img>
+<img src="https://raw.githubusercontent.com/umbum/convenience-store-POS-system/delete_univ/docs/ERD.bmp"></img>
 </br></br>
 
 ### UI
-<img src="https://raw.githubusercontent.com/umbum/convenience-store-POS-system/master/docs/UI/sales1.png"></img>
-<img src="https://raw.githubusercontent.com/umbum/convenience-store-POS-system/master/docs/UI/sales2.png" width="49%"></img>
-<img src="https://raw.githubusercontent.com/umbum/convenience-store-POS-system/master/docs/UI/receipt.png" width="49%"></img>
-<img src="https://raw.githubusercontent.com/umbum/convenience-store-POS-system/master/docs/UI/instock.png" width="49%"></img>
-<img src="https://raw.githubusercontent.com/umbum/convenience-store-POS-system/master/docs/UI/discard.png" width="49%"></img>
-<img src="https://raw.githubusercontent.com/umbum/convenience-store-POS-system/master/docs/UI/order.png" width="49%"></img>
-<img src="https://raw.githubusercontent.com/umbum/convenience-store-POS-system/master/docs/UI/login.png" width="49%"></img>
+<img src="https://raw.githubusercontent.com/umbum/convenience-store-POS-system/delete_univ/docs/UI/sales1.png"></img>
+<img src="https://raw.githubusercontent.com/umbum/convenience-store-POS-system/delete_univ/docs/UI/sales2.png" width="49%"></img>
+<img src="https://raw.githubusercontent.com/umbum/convenience-store-POS-system/delete_univ/docs/UI/receipt.png" width="49%"></img>
+<img src="https://raw.githubusercontent.com/umbum/convenience-store-POS-system/delete_univ/docs/UI/instock.png" width="49%"></img>
+<img src="https://raw.githubusercontent.com/umbum/convenience-store-POS-system/delete_univ/docs/UI/discard.png" width="49%"></img>
+<img src="https://raw.githubusercontent.com/umbum/convenience-store-POS-system/delete_univ/docs/UI/order.png" width="49%"></img>
+<img src="https://raw.githubusercontent.com/umbum/convenience-store-POS-system/delete_univ/docs/UI/login.png" width="49%"></img>
 </br></br>
 
 ### 기술셋
