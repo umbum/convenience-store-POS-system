@@ -21,7 +21,7 @@
 </br>
 
 ### 과제 제약 사항
-hibernate, JPA, Mybatis같은 ORM 도구는 사용하지 않고 직접 오라클 쿼리 작성할 것.  
+hibernate, JPA같은 ORM 도구는 사용하지 않고 직접 오라클 쿼리 작성할 것.  
 </br>
 
 ### 최종 보고서
